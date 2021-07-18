@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+strong.semi-bold,
+b.semi-bold,
+th.semi-bold,
+label.semi-bold,
+span.badge.semi-bold {
+    font-weight: 500 !important;
+}
+
+hr {
+    border-top: 1px solid hsla(230, 15%, 65%, 1) !important;
+}
+
+div.spinner-grow.spinner-xl,
+div.spinner-border.spinner-xl {
+    width: 4rem !important;
+    height: 4rem !important;
+}
+

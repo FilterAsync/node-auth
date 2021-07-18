@@ -1,0 +1,90 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom-0 shadow-sm" role="navigation">
+    <div class="container-fluid">
+        <a href="/" class="navbar-brand">
+            <span class="fas fa-globe" aria-hidden="true"></span>
+            Brand
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon" aria-hidden="true"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                <form class="d-flex me-2" data-focus-key="/">
+                    <div class="input-group">
+                        <input id="nav-search" class="form-control" placeholder="Search..." type="text" role="searchbox" aria-label="Search...">
+                        <button class="input-group-text">
+                            Search
+                        </button>
+                    </div>
+                    <script type="text/javascript">
+                    (function() {
+                        $(document).on("keydown", e => {
+                            const searchBar = $('#nav-search');
+                            if (e.ctrlKey && e.keyCode === 191) {
+                                e.preventDefault();
+                                searchBar.focus();
+                            }
+                        });
+                    })();
+                    </script>
+                </form>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown" href="#" id="navbar-pages-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="fas fa-th fa-2x" aria-hidden="true"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbar-pages-dropdown">
+                        <li>
+                            <a href="/" class="dropdown-item">
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/apps" class="dropdown-item">
+                                Dashboard
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown" href="#" id="navbar-user-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="<%= user.avatarUrl %>" class="rounded-circle p-fixed" alt="Profile Picture" width="32" height="32">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbar-user-dropdown">
+                        <li>
+                            <a href="/settings" class="dropdown-item text-center">
+                                <img src="<%= user.avatarUrl %>" class="rounded-circle" width="48" height="48" alt="avatar">
+                                <b class="text-secondary semi-bold mb-0">
+                                    <%= user.username %>
+                                </b>
+                                <br>
+                                <small class="text-muted">
+                                    <span class="fas fa-envelope" aria-hidden="true"></span>
+                                    <%= user.visibleEmail %>
+                                </small>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/settings">
+                                <span class="fas fa-sliders-h" aria-hidden="true"></span>
+                                Settings
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form action="/logout?_method=DELETE" method="POST">
+                                <button type="submit" class="dropdown-item">
+                                    <span class="fas fa-arrow-right" aria-hidden="true"></span>
+                                    Sign out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

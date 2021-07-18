@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../styles/normalize.css" type="text/css">
+    <link rel="stylesheet" href="../styles/customize.css" type="text/css">
+    <%- include ("./includes/resources.ejs") %>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="card shadow">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <span class="fas fa-key" aria-hidden="true"></span>
+                    Login
+                </h4>
+            </div>
+            <div class="card-body">
+                <form class="needs-validation <%= error === "true" ? "was-validated" : "" %>" action="/login" autocomplete="on" method="POST" novalidate="novalidate">
+                    <% if (error === "true") { %>
+                        <div class="alert alert-danger">
+                            <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
+                            Invalid credentials.
+                        </div>    
+                    <% } %>
+                    <div class="form-floating mb-4">
+                        <input type="text" autocomplete="username" id="credential" name="eou" class="form-control" placeholder="Username/Email address" required aria-required="true">
+                        <label for="credential">
+                            Username/Email address
+                        </label>
+                        <div class="invalid-feedback">
+                            Username/Email address cannot be empty.
+                        </div>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" autocomplete="current-password" id="password" name="password" title="Password" aria-label="Password" class="form-control" minlength="8" placeholder="Password" required aria-required="true">
+                        <label for="password">
+                            Password
+                        </label>
+                        <div class="invalid-feedback">
+                            Password must be at least 8 characters.
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" disabled aria-disabled="true">
+                        Submit
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <a href="/register" target="_self">
+                    Don't have an account
+                </a>
+                <span class="mx-2" aria-hidden="true">
+                    &bull;
+                </span>
+                <a href="/forget-password" target="_self">
+                    Lost Password
+                </a>
+                <div role="separator" class="mb-4" aria-hidden="true"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    (function() {
+        "use strict";
+        const email = $('#credential'),
+        password = $('#password'),
+        submitBtn = $('button[type="submit"]');
+        [email, password].forEach(field => {
+            field.on('input', function() {
+                if (email.val() && password.val()) {
+                    submitBtn.removeDisableAttr();
+                    return;
+                }
+                submitBtn.addDisableAttr();
+            });
+        });
+        const forms = document.querySelectorAll(".needs-validation");
+        Array.prototype.slice.call(forms).forEach(form => {
+            form.addEventListener("submit", event => {
+                submitBtn.addDisableAttr();
+                window.loadingSymbol.prependTo(submitBtn);
+                const loading = submitBtn.find("div#loading");
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    loading.remove();
+                }
+                form.classList.add("was-validated");
+            }, false);
+        });
+    })();
+    </script>
+</body>
+</html>

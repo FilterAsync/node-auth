@@ -1,0 +1,162 @@
+"use strict";
+import express from "express"
+import mongoose from "mongoose"
+import compression from "compression"
+import cors from "cors"
+import session from "express-session"
+import helmet from "helmet"
+import methodOverride from "method-override"
+import passport from "passport"
+import {
+  serializeUser,
+  deserializeUser,
+  localStrategy,
+} from "./config/passport.mjs"
+import {
+  login,
+  register,
+  home,
+  settings,
+  oauth,
+  newApp
+} from "./routes/index.mjs"
+import {
+  active,
+  notFoundError,
+  decodeUriError,
+  internalServerError
+} from "./middleware/index.mjs"
+import * as dotenv from "dotenv"
+import path from "path"
+import { fileURLToPath } from "url"
+import morgan from "morgan"
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+const { env } = process;
+
+if (env.NODE_ENV !== "production") {
+  dotenv.config();
+}
+
+app.set("views", path.join(__dirname, "client"));
+app.set("view engine", "ejs");
+app.use(express.static(path.join(__dirname, "/public")));
+
+(async function() {
+  try {
+    await mongoose.connect(
+      env.MONGODB_URI, {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        useCreateIndex: true,
+      }
+    );
+    console.log("Database connection succeeded.");
+  } catch (err) {
+    throw err;
+  }
+})();
+
+mongoose.Promise = global.Promise;
+
+app.use(methodOverride("_method"));
+
+app.use(helmet());
+
+app.use(
+  session({
+    secret: env.SESSION_SECRET,
+    resave: false,
+    name: env.SESSION_NAME,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(serializeUser);
+
+passport.deserializeUser(deserializeUser);
+
+passport.use(localStrategy);
+
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"],
+    preflightContinue: false
+  })
+);
+
+app.use(morgan(function (tokens, req, res) {
+  const contentLength = tokens.res(req, res, "Content-Length") || "None"
+  
+  return [
+    tokens.method(req, res) + " method on",
+    `"${tokens.url(req, res)}"`,
+    "status: " + tokens.status(req, res),
+    "content-length: " + contentLength, "-",
+    tokens["response-time"](req, res), "ms" + "."
+  ].join(" ");
+}));
+
+app.use(compression());
+
+app.use((_req, res, next) => {
+  res.set({
+    "Content-Security-Policy": `
+		default-src 'self';
+		style-src 'self' 'unsafe-inline' https://use.fontawesome.com/
+		https://cdn.jsdelivr.net/npm/
+		https://translate.googleapis.com/translate_static/css/translateelement.css;
+		script-src 'self' 'unsafe-inline' https://code.jquery.com/
+		https://www.googletagmanager.com/
+		https://cdn.jsdelivr.net/npm/
+		https://cdnjs.cloudflare.com/ajax/libs/fetch/
+		https://www.gstatic.com/recaptcha/releases/;
+		script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/
+		https://translate.googleapis.com/
+		https://www.gstatic.com/recaptcha/releases/
+		https://cdn.jsdelivr.net/npm/
+		https://www.google.com/recaptcha/api.js
+		https://translate.google.com/
+		https://www.googletagmanager.com/;
+		font-src 'self' 'unsafe-inline' https://use.fontawesome.com/;
+		frame-src 'self' 'unsafe-inline' https://www.google.com/
+		https://www.googletagmanager.com/;
+		img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline'
+		https://gravatar.com/avatar/;`.replace(/\n\t/g, ""),
+    "X-XSS-Protection": "1; mode=block",
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Cache-Control": "no-store, no-cache",
+  });
+  next();
+});
+
+app.use(active);
+
+app.use(home);
+
+app.use(login);
+
+app.use(register);
+
+app.use(newApp);
+
+app.use(oauth);
+
+app.use(settings);
+
+app.use(decodeUriError);
+
+app.use(notFoundError);
+
+app.use(internalServerError);
+
+export default app;
