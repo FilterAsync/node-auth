@@ -1,10 +1,13 @@
 /node_modules
 /.vscode
+/secrets
+/secret
+secret.*
 /tests
 /tests/test2
+/vendor/
 npm-debug.log
 yarn-error.log
-/vendor/
 _Chutzpah*
 test.*
 *.rest

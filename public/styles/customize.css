@@ -1,5 +1,9 @@
 @charset "UTF-8";
 
+body.fixed-nav {
+  padding-top: 5rem;
+}
+
 strong.semi-bold,
 b.semi-bold,
 th.semi-bold,
@@ -9,7 +13,20 @@ span.badge.semi-bold {
 }
 
 hr {
-    border-top: 1px solid hsla(230, 15%, 65%, 1) !important;
+    border-top: 1px solid hsl(230, 15%, 65%) !important;
+}
+
+label.auto-capitalize {
+    text-transform: capitalize !important;
+}
+
+textarea {
+    resize: vertical;
+}
+
+*.text-secondary > a.disabled {
+    color: hsla(0, 0%, 80%, .92);
+    pointer-events: none;
 }
 
 div.spinner-grow.spinner-xl,
@@ -17,4 +34,3 @@ div.spinner-border.spinner-xl {
     width: 4rem !important;
     height: 4rem !important;
 }
-

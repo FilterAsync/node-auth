@@ -1,0 +1,4 @@
+[*.{mjs,js,json}]
+indent_style = tab
+tab_width = 2
+trim_trailing_whitespace = true

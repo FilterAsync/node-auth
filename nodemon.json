@@ -1,6 +1,0 @@
-{
-    "watch": "*.*",
-    "ext": "js,mjs,json",
-    "ignore": ["/.vscode", "/node_modules", "/public"],
-    "exec": "node server"
-}

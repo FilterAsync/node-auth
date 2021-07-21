@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../styles/normalize.css" type="text/css">
-    <link rel="stylesheet" href="../styles/customize.css" type="text/css">
+    <link rel="stylesheet" href="../public/styles/normalize.css" type="text/css" />
+    <link rel="stylesheet" href="../public/styles/customize.css" type="text/css" />
     <%- include ("./includes/resources.ejs") %>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <meta name="title" content="Login" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="og:title" content="Login" />
     <title>Login</title>
 </head>
 <body>
@@ -19,12 +22,20 @@
                 </h4>
             </div>
             <div class="card-body">
-                <form class="needs-validation <%= error === "true" ? "was-validated" : "" %>" action="/login" autocomplete="on" method="POST" novalidate="novalidate">
-                    <% if (error === "true") { %>
+                <%
+                const isError = !!messages.error
+                %>
+                <form class="needs-validation <%= isError ? "was-validated" : "" %>" action="/login<%= redirectUri ? "?redirectUri=" + encodeURIComponent(redirectUri) : "" %>" autocomplete="on" method="POST" novalidate="novalidate">
+                    <% if (isError) { %>
                         <div class="alert alert-danger">
                             <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
-                            Invalid credentials.
+                            <%= messages.error + "." %>
                         </div>    
+                    <% } else if (sessionExpired === "true") { %>
+                        <div class="alert alert-danger">
+                            <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
+                            Your session has expired. Please log in.
+                        </div>
                     <% } %>
                     <div class="form-floating mb-4">
                         <input type="text" autocomplete="username" id="credential" name="eou" class="form-control" placeholder="Username/Email address" required aria-required="true">
@@ -44,8 +55,14 @@
                             Password must be at least 8 characters.
                         </div>
                     </div>
+                    <div class="form-check mb-4">
+                        <input type="checkbox" name="rem-me" id="rem-me" class="form-check-input">
+                        <label for="rem-me" class="form-check-label">
+                            Remember Me
+                        </label>
+                    </div>
                     <button type="submit" class="btn btn-primary" disabled aria-disabled="true">
-                        Submit
+                        Log in
                     </button>
                 </form>
             </div>
@@ -56,7 +73,7 @@
                 <span class="mx-2" aria-hidden="true">
                     &bull;
                 </span>
-                <a href="/forget-password" target="_self">
+                <a href="/reset-password" target="_self">
                     Lost Password
                 </a>
                 <div role="separator" class="mb-4" aria-hidden="true"></div>
@@ -69,6 +86,19 @@
         const email = $('#credential'),
         password = $('#password'),
         submitBtn = $('button[type="submit"]');
+        try {
+            var remMeData = JSON.parse(
+                decodeURIComponent(document.getCookie("rem-me"))
+            );
+        } catch {
+            remMeData = void 0;
+        }
+        if (remMeData) {
+            email.val(remMeData?.username);
+            password.val(remMeData?.password);
+            submitBtn.removeDisableAttr();
+            $("#rem-me").prop("checked", true);
+        }
         [email, password].forEach(field => {
             field.on('input', function() {
                 if (email.val() && password.val()) {
@@ -83,11 +113,10 @@
             form.addEventListener("submit", event => {
                 submitBtn.addDisableAttr();
                 window.loadingSymbol.prependTo(submitBtn);
-                const loading = submitBtn.find("div#loading");
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
-                    loading.remove();
+                    submitBtn.removeDisableAttr();
                 }
                 form.classList.add("was-validated");
             }, false);

@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <%- include ("./includes/resources.ejs") %>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
     <title>Register</title>
 </head>
 <body>
@@ -96,11 +96,11 @@
         });
         [username, email].forEach(field => {
             field.on("change", async function() {
-                const name = $(this).prop("name");
-                const value = $(this).val();
-                const invalidFeedback = $(name + "-invalid-feedback");
-                const hint = $(name + "-hint");
-                const request = new Request(
+                const name = $(this).prop("name"),
+                value = $(this).val(),
+                invalidFeedback = $("#" + name + "-invalid-feedback"),
+                hint = $("#" + name + "-hint"),
+                request = new Request(
                     `/available?field=${name}&value=${value}`, {
                     method: "POST",
                     headers: new Headers({
@@ -112,9 +112,11 @@
                 const body = await response.json();
                 if (body.wasTaken) {
                     hint.bootstrapHide();
+                    console.log(name.toString())
                     invalidFeedback.html(`
-                        ${name} was taken. If it is yours, please <a href="/login">Login</a>.
+                        ${name[0].toUpperCase() + name.slice(1)} was taken. If it is yours, please <a href="/login">Login</a>.
                     `);
+                    hint.bootstrapHide();
                     field.showValidate();
                     throw new Error("Credentials was taken.");
                 }
@@ -131,18 +133,15 @@
         Array.prototype.slice.call(forms).forEach(form => {
             form.addEventListener("submit", async event => {
                 event.preventDefault();
+                event.stopPropagation();
                 submitBtn.addDisableAttr();
-                window.loadingSymbol.prependTo(submitBtn);
-                const hasLoadingSymbol = submitBtn.find("div#loading");
                 form.classList.add("was-validated");
                 if (!form.checkValidity()) {
-                    event.stopPropagation();
                     submitBtn.removeDisableAttr();
                     ["username", "email", "password"]
                     .forEach(field => {
                         $("#" + field + "-hint").bootstrapHide();
                     });
-                    hasLoadingSymbol.remove();
                     return;
                 }
                 const request = new Request("/register", {
@@ -161,18 +160,17 @@
                 try {
                     var body = await response.json();
                 } catch {
-                    body = null;
+                    body = void 0;
                 }
                 if (!response.ok) {
-                    form.classList.add("was-validated");
+                    submitBtn.removeDisableAttr();
                     alert.attr("class", "alert alert-danger")
-                        .bootstrapShow()
                         .text("Failed to register.");
-                    hasLoadingSymbol.remove();
-                    
                     throw new Error(body?.message || "Failed to register.");
                 }
-                hasLoadingSymbol.remove();
+                username.off("input").off("change")
+                email.off("input").off("change")
+                password.off("input");
                 redirect(body.vlink);
             });
         });

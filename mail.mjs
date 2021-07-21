@@ -1,19 +1,19 @@
 import nodemailer from "nodemailer"
 import {
-    SmtpOptions,
-    MailFrom
+	SmtpOptions,
+	MailFrom
 } from "./config/mail.mjs"
 import * as dotenv from "dotenv"
 
 const { env } = process;
 
 if (env.NODE_ENV !== "production") {
-    dotenv.config();
+	dotenv.config();
 }
 
 const transporter = nodemailer.createTransport(SmtpOptions)
 
 export const sendMail = options => transporter.sendMail({
-    ...options,
-    from: MailFrom,
+	...options,
+	from: MailFrom,
 });

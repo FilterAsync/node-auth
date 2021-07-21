@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../public/styles/normalize.css" type="text/css" />
+    <link rel="stylesheet" href="../public/styles/customize.css" type="text/css" />
+    <%- include ("./includes/resources.ejs") %>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <title>Email Verification Step</title>
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="text-center"> 
+                    <span class="fas fa-envelope fa-5x" aria-hidden="true"></span>
+                </div>
+                <h5 class="card-title text-center">
+                    Verify your email to finish signing up
+                </h5>
+                <div class="d-block mb-4">
+                    <small class="card-text text-secondary">
+                        Thank your for signing up.
+                    </small>
+                </div>
+                <hr />
+                <div class="text-secondary card-text">
+                    <div class="d-block mb-4">
+                        Everything is ready, just one more step!
+                    </div>
+                    We've sent a verification email to <strong class="semi-bold"><%= user.visibleEmail %></strong>.
+                    Clicking the confirmation link in that email lets us know the email address is both valid and yours.
+                    The link in the email will expire in 12 hours. 
+                    <hr class="my-4" />
+                    Did not receive?
+                    <button id="resend-btn" class="btn btn-link p-0 w-auto h-auto d-inline m-0">
+                        Resend
+                    </button>
+                    <div id="resend-alert" class="alert alert-danger mt-4 d-none"></div>
+                </div>
+                <script type="text/javascript">
+                (function() {
+                    const resendBtn = $("#resend-btn"),
+                    alert = $("#resend-alert");
+                    resendBtn.on("click", async function() {
+                        resendBtn.addDisableAttr();
+                        const params = new URLSearchParams(location.search);
+                        const request = new Request(
+                            "/email/resend?email=" + params.get("email"), {
+                                method: "POST",
+                                headers: new Headers({
+                                    "Accept": "application/json",
+                                }),
+                            },
+                        );
+                        const response = await fetch(request),
+                        body = await response.json();
+                        if (!response.ok) {
+                            resendBtn.removeDisableAttr();
+                            alert.attr("class", "alert alert-danger")
+                            .html(`
+                                <strong class="semi-bold">
+                                    Error!
+                                </strong>
+                                <p>${body.message}</p>
+                            `);
+                            throw new Error(body.message);
+                        }
+                        alert.attr("class", "alert alert-success")
+                            .html(`
+                            <strong class="semi-bold">
+                                Success!
+                            </strong>
+                            <p>${body.message}</p>
+                        `);
+                    });
+                })();
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
