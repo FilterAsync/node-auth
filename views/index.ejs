@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../public/styles/normalize.css" type="text/css" />
+    <link rel="stylesheet" href="../public/styles/customize.css" type="text/css" />
+    <%- include ("./includes/resources.ejs") %>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <title>Node Authentication Starter</title>
+</head>
+<body class="fixed-nav">
+    <%- include ('./includes/navbar.ejs') %>
+    <div id="main-content" class="container">
+        <h4>
+            <img src="<%= user.avatarUrl %>" alt="avatar" class="rounded-circle" width="64" height="64">
+            Welcome, <%= user.username %>
+        </h4>
+    </div>
+</body>
+</html>

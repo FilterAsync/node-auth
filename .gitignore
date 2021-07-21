@@ -1,0 +1,6 @@
+/node_modules
+/.vscode
+/secrets
+/.env
+npm-debug.log
+yarn-error.log

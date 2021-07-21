@@ -1,0 +1,48 @@
+{
+  "name": "node-authentication-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "devStart": "nodemon server",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "compression": "^1.7.4",
+    "connect-redis": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.0",
+    "helmet": "^4.6.0",
+    "ioredis": "^4.27.6",
+    "method-override": "^3.0.0",
+    "mongodb": "^3.6.10",
+    "mongoose": "^5.13.2",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.6.3",
+    "npm": "^7.20.0",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "redis": "^3.1.2",
+    "serve-favicon": "^2.5.0",
+    "touch-cli": "^0.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.2"
+  }
+}
