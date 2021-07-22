@@ -87,7 +87,7 @@ function message(user, verifyLink) {
   return `
     <h4>Hello ${user.username},</h4>
     <p>
-      We're happy you signed up. 
+      We're happy you signed up.
       <br />
       To start exploring the app, please confirm your email address by clicking the link below.
     </p>
@@ -161,6 +161,7 @@ router.post(
         html: message(user, verifyLink),
       });
     } catch (err) {
+			console.error(err);
       res.status(500).json({
         message: "Failed to send email.",
       });

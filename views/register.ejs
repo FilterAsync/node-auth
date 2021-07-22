@@ -23,7 +23,7 @@
                         Failed to register.
                     </div>
                     <div class="form-floating mb-4">
-                        <input id="username" autocomplete="username" name="username" type="text" placeholder="Username" class="form-control" pattern="^(?=^[^_]+_?[^_]+$)\w{3,20}$" required aria-required="true"
+                        <input id="username" autocomplete="username" name="username" type="text" placeholder="Username" class="form-control" pattern="^(?=^[^_]+_?[^_]+$)\w{3,20}$" required="required" aria-required="true"
                         aria-describedby="username-hint" aria-errormessage="username-invalid-feedback">
                         <label for="username">
                             Username
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                     <div class="form-floating mb-4">
-                        <input id="email" name="email" autocomplete="email" type="text" placeholder="Username" class="form-control" pattern='^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$' required aria-required="true"
+                        <input id="email" name="email" autocomplete="email" type="text" placeholder="Username" class="form-control" pattern='^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$' required="required" aria-required="true"
                         aria-describedby="email-hint" aria-errormessage="email-invalid-feedback">
                         <label for="email">
                             Email
@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="form-floating mb-4">
-                        <input id="password" name="password" autocomplete="current-password" type="password" placeholder="Username" class="form-control" minlength="8" required aria-required="true"
+                        <input id="password" name="password" autocomplete="current-password" type="password" placeholder="Username" class="form-control" minlength="8" required="required" aria-required="true"
                         aria-describedby="password-hint" aria-errormessage="password-invalid-feedback">
                         <label for="password">
                             Password
@@ -163,10 +163,16 @@
                     body = void 0;
                 }
                 if (!response.ok) {
+                    const message = body?.message || "Failed to register."
                     submitBtn.removeDisableAttr();
                     alert.attr("class", "alert alert-danger")
-                        .text("Failed to register.");
-                    throw new Error(body?.message || "Failed to register.");
+                        .html(`
+                        <strong class="semi-bold">
+                            Error!
+                        </strong>
+                        <p>${message}</p>
+                    `);
+                    throw new Error(message);
                 }
                 username.off("input").off("change")
                 email.off("input").off("change")
