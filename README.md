@@ -7,6 +7,6 @@ Here is an example of a web authentication that uses both MongoDB and Redis.
 - [x] Login, Logout, Register & session timeout (expiry)
 - [x] Email verification + Resend email
 - [x] Password Reset
-- [] Persistent Login (Remember Me)
-- [] Login reCaptcha verification trap *(redirects to a verification page if the credentials are incorrect.)*
-- [] Facebook/Google/Twitter Passport Login
+- [ ] Persistent Login (Remember Me)
+- [ ] Login reCaptcha verification trap *(redirects to a verification page if the credentials are incorrect.)*
+- [ ] Facebook/Google/Twitter Passport Login
