@@ -101,7 +101,7 @@
                 invalidFeedback = $("#" + name + "-invalid-feedback"),
                 hint = $("#" + name + "-hint"),
                 request = new Request(
-                    `/available?field=${name}&value=${value}`, {
+                    `/available?field=${encodeURIComponent(name)}&value=${encodeURIComponent(value)}`, {
                     method: "POST",
                     headers: new Headers({
                         "Content-Type": "application/json",
@@ -174,10 +174,10 @@
                     `);
                     throw new Error(message);
                 }
-                username.off("input").off("change")
-                email.off("input").off("change")
+                username.off("input").off("change");
+                email.off("input").off("change");
                 password.off("input");
-                redirect(body.vlink);
+                redirect(body.link);
             });
         });
     })();

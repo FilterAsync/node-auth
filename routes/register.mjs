@@ -25,23 +25,21 @@ router.get("/register", isUnauthenticated, (req, res) =>
   res.render("register")
 );
 
-router.get("/register/emailVerifyStep", isUnauthenticated, async (req, res) => {
-  const { email } = req.query;
-  const user = await User.findOne({ email: email }).select(
-    "username visibleEmail"
-  );
-  if (!user) {
-    res.status(404).render("404");
-    return;
-  }
-  if (user.verifiedAt) {
-    res.status(404).render("404");
-    return;
-  }
-  res.render("email-verify-step", {
-    user: user,
-  });
-});
+router.get(
+	"/register/email-verify-step",
+	isUnauthenticated,
+	async (req, res) => {
+		const { email } = req.query;
+		const user = await User.findOne({ email: email, }).select(
+			"username visibleEmail"
+		);
+		if (!user || user.verifiedAt) {
+			res.status(404).render("404");
+			return;
+		}
+		res.render("email-verify-step", { user: user, });
+	}
+);
 
 router.get("/email/verify", isUnauthenticated, async (req, res) => {
   const { id, token, expires, signature } = req.query;
@@ -60,10 +58,7 @@ router.get("/email/verify", isUnauthenticated, async (req, res) => {
   }
 
   if (user.verifiedAt) {
-    res.status(400).json({
-      message: "Email already verified.",
-      status: "400",
-    });
+    res.status(400).redirect("/register");
     return;
   }
 
@@ -148,7 +143,6 @@ router.post(
         favorites: [],
         creations: [],
       },
-      verifiedAt: null,
     });
     user.avatarUrl = await user.gravatar(96);
     user.save();
@@ -169,7 +163,7 @@ router.post(
     }
 
     res.status(200).json({
-      vlink: "/register/emailVerifyStep?email=" + user.email,
+      link: "/register/email-verify-step?email=" + user.email,
     });
   }
 );
@@ -177,7 +171,9 @@ router.post(
 router.post("/email/resend", isUnauthenticated, async (req, res) => {
   const { email } = req.query;
 
-  const user = await User.findOne({ email: email }).select("username email visibleEmail verifiedAt");
+  const user = await User.findOne({
+		email: email
+	}).select("username email visibleEmail verifiedAt");
 
   if (user && !user.verifiedAt) {
     const verifyLink = user.createVerificationUrl();

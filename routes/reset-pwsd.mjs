@@ -143,10 +143,8 @@ router.post("/password/reset", isUnauthenticated, async (req, res) => {
 
   req.login(user, (err) => {
     if (err) {
-      res.status(500).json({
-        message: "Failed to login.",
-        status: "500",
-      });
+			console.error(err);
+      res.status(500).redirect("/login");
       return;
     }
     res.status(200).redirect("/");
