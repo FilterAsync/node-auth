@@ -1,9 +1,9 @@
-import nodemailer from "nodemailer"
+import nodemailer from "nodemailer";
 import {
 	SmtpOptions,
 	MailFrom
-} from "./config/mail.mjs"
-import * as dotenv from "dotenv"
+} from "./config/mail.mjs";
+import * as dotenv from "dotenv";
 
 const { env } = process;
 
