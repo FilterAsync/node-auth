@@ -2,6 +2,7 @@
 import catchAsync from "express-async-handler";
 import * as dotenv from "dotenv";
 import { Unauthorized } from "../errors/index.mjs";
+import { logOut } from "../auth.mjs";
 
 const { env } = process;
 
@@ -38,8 +39,6 @@ export const active = catchAsync(async (req, res, next) => {
       return next(new Unauthorized("Session expired"));
     }
     req.session.createdAt = now;
-    next();
-    return;
   }
   next();
 });

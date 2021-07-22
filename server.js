@@ -4,7 +4,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import mongoose from "mongoose";
-import { RedisOptions } from "./config/cache.mjs";
+import { RedisOptions } from "./config/index.mjs";
 
 const { env } = process;
 
@@ -23,7 +23,7 @@ const PORT = +env.PORT || 8080;
   console.log("Database connection succeeded.");
   const RedisStore = connectRedis(session);
 
-  const client = new Redis({ RedisOptions });
+  const client = new Redis(env.REDIS_HOST, RedisOptions);
 
   const store = new RedisStore({ client: client });
 

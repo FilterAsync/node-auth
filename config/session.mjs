@@ -8,7 +8,7 @@ if (env.NODE_ENV !== "production") {
 
 export const sessionOptions = {
   secret: env.SESSION_SECRET,
-  resave: false,
   name: env.SESSION_NAME,
-  saveUninitialized: false,
+	resave: false,
+  saveUninitialized: true,
 };

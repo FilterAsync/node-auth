@@ -10,7 +10,7 @@ import {
   serializeUser,
   deserializeUser,
   localStrategy,
-} from "./config/passport.mjs";
+} from "./config/index.mjs";
 import {
   login,
   register,
@@ -28,7 +28,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import favicon from "serve-favicon";
-import { sessionOptions } from "./config/session.mjs";
+import { sessionOptions } from "./config/index.mjs";
 import flash from "express-flash";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -114,6 +114,6 @@ export const createApp = (store) => {
   app.use(notFoundError);
 
   app.use(internalServerError);
-  
+
   return app;
 }
