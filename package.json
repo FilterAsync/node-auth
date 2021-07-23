@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "devStart": "nodemon server",
+    "devStart": "nodemon --ignore ./public/** --exec node server",
+    "debug": "set DEBUG=express:* & node server",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -23,6 +24,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "express-flash": "^0.0.2",
+    "express-rate-limit": "^5.3.0",
     "express-session": "^1.17.0",
     "helmet": "^4.6.0",
     "ioredis": "^4.27.6",

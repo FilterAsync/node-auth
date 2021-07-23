@@ -1,10 +1,7 @@
 import { createApp } from "./app.mjs";
 import * as dotenv from "dotenv";
-import session from "express-session";
-import connectRedis from "connect-redis";
-import Redis from "ioredis";
 import mongoose from "mongoose";
-import { RedisOptions } from "./config/cache.mjs";
+import { SessionStore } from "./config/cache.mjs";
 
 const { env } = process;
 
@@ -21,13 +18,8 @@ const PORT = +env.PORT || 8080;
     useCreateIndex: true,
   });
   console.log("Database connection succeeded.");
-  const RedisStore = connectRedis(session);
 
-  const client = new Redis({ RedisOptions });
-
-  const store = new RedisStore({ client: client });
-
-  const app = createApp(store);
+  const app = createApp(SessionStore);
   app.listen(PORT, function () {
     console.log(
       "Server is running on PORT %d in %s mode.",

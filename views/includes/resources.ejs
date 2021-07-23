@@ -6,7 +6,10 @@
 <script type="text/javascript">
 (function() {
     "use strict";
-    document.getCookie = cookieName => {
+    String.prototype.toCapitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1,);
+    }
+    document.getCookie = (cookieName) => {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${cookieName}=`);
         if (parts.length === 2) {
@@ -20,7 +23,7 @@
     </div>`);
     $.fn.extend({
         removeDisableAttr:function(){$(this).prop("disabled",false);},
-        addDisableAttr:function(){$(this).prop("disabled",true);},
+        addDisableAttr:function(){$(this).prop("disabled", true);},
         bootstrapHide:function(){$(this).addClass("d-none");},
         bootstrapShow:function(){$(this).removeClass("d-none");},
         showValidate:function(){$(this).addClass("is-invalid");},
