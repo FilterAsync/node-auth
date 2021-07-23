@@ -157,11 +157,7 @@ router.post(
       email: emailHash,
       visibleEmail: email,
       password: passwordHash,
-      apps: {
-        total: 0,
-        favorites: [],
-        creations: [],
-      },
+			verifiedAt: null,
     });
     user.avatarUrl = await user.gravatar(96);
     user.save();

@@ -4,7 +4,7 @@ import {
   isAuthenticated,
   isUnauthenticated,
 } from "../middleware/auth.mjs";
-import { logOut } from "../auth.mjs"
+import { logOut } from "../auth.mjs";
 import passport from "passport";
 import rateLimit from "express-rate-limit";
 import { rateLimitInit } from "../config/index.mjs";
@@ -37,8 +37,8 @@ router.post(
 			handler: (_req, res) => {
 				res.status(429).render("login", { tooManyRequests: true, });
 			},
-		}
-	)),
+		})
+	),
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: "Invalid credentials",

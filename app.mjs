@@ -58,9 +58,7 @@ export const createApp = (store) => {
   app.use(passport.session());
 
   passport.serializeUser(serializeUser);
-
   passport.deserializeUser(deserializeUser);
-
   passport.use(localStrategy);
 
   app.use(

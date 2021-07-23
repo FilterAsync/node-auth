@@ -38,23 +38,6 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    apps: {
-      total: {
-        type: Number,
-        required: true,
-        default: 0,
-      },
-      favorites: {
-        type: Array,
-        required: true,
-        default: [],
-      },
-      creations: {
-        type: Array,
-        required: true,
-        default: [],
-      },
-    },
     verifiedAt: {
       type: Date,
       required: false,
