@@ -1,3 +1,5 @@
+"use strict";
+
 import * as dotenv from "dotenv";
 
 const { env } = process;

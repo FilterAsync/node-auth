@@ -13,7 +13,7 @@ if (env.NODE_ENV !== "production") {
 
 const transporter = nodemailer.createTransport(SmtpOptions)
 
-export const sendMail = options => transporter.sendMail({
+export const sendMail = (options) => transporter.sendMail({
 	...options,
 	from: MailFrom,
 });

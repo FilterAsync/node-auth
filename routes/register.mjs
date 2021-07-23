@@ -8,6 +8,9 @@ import { isUnauthenticated } from "../middleware/auth.mjs";
 import { markAsVerified } from "../auth.mjs";
 import * as bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
+import { rateLimitInit } from "../config/index.mjs";
+import ms from "ms";
 
 const { env } = process;
 
@@ -29,11 +32,16 @@ router.get(
 	"/register/email-verify-step",
 	isUnauthenticated,
 	async (req, res) => {
-		const { email } = req.query;
-		const user = await User.findOne({ email: email, }).select(
-			"username visibleEmail"
-		);
-		if (!user || user.verifiedAt) {
+		const { email, expires } = req.query;
+		let user;
+		if (!+expires || !(+expires > Date.now() &&
+			+expires - Date.now() < env.EMAIL_VERIFICATION_TIMEOUT) ||
+			!(user = await User.findOne({
+				email: email,
+			}).select(
+				"username visibleEmail"
+			)) || user.verifiedAt
+		) {
 			res.status(404).render("404");
 			return;
 		}
@@ -63,7 +71,7 @@ router.get("/email/verify", isUnauthenticated, async (req, res) => {
   }
 
   await markAsVerified(user);
-  req.login(user, (err) => {
+  req.logIn(user, (err) => {
     if (err) {
       res.status(500).json({
         message: "Failed to login.",
@@ -103,6 +111,17 @@ function message(user, verifyLink) {
 router.post(
   "/register",
   isUnauthenticated,
+	rateLimit(
+		rateLimitInit({
+			windowMs: ms("1d"),
+			max: 3,
+			handler: (_req, res) => {
+				res.status(429).json({
+					message: "Too many requests, please try again later.",
+				});
+			}
+		}
+	)),
   validContentType(),
   async (req, res) => {
     const { username, email, password } = req.body;
@@ -163,7 +182,8 @@ router.post(
     }
 
     res.status(200).json({
-      link: "/register/email-verify-step?email=" + user.email,
+      link: "/register/email-verify-step?email=" + user.email +
+			"&expires=" + new URLSearchParams(verifyLink).get("expires"),
     });
   }
 );

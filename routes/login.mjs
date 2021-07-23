@@ -5,8 +5,10 @@ import {
   isUnauthenticated,
 } from "../middleware/auth.mjs";
 import { logOut } from "../auth.mjs"
-import { User } from "../models/user.mjs";
 import passport from "passport";
+import rateLimit from "express-rate-limit";
+import { rateLimitInit } from "../config/index.mjs";
+import ms from "ms";
 
 const router = express.Router({
   caseSensitive: true,
@@ -19,6 +21,7 @@ router.get("/login", isUnauthenticated, (req, res) => {
     error: req.query.error,
     sessionExpired: req.query.session_expired,
     redirectUri: req.query.redirectUri,
+		tooManyRequests: false,
   });
 });
 
@@ -27,6 +30,15 @@ router.use(express.urlencoded({ extended: false }));
 router.post(
   "/login",
   isUnauthenticated,
+	rateLimit(
+		rateLimitInit({
+			windowMs: ms("15m"),
+			max: 3,
+			handler: (_req, res) => {
+				res.status(429).render("login", { tooManyRequests: true, });
+			},
+		}
+	)),
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: "Invalid credentials",
@@ -37,7 +49,7 @@ router.post(
         "rem-me",
         `{"username":"${req.body.eou}","password":"${req.body.password}"}`,
         {
-          maxAge: 604800000,
+          maxAge: ms("7d"),
         }
       );
     } else {
@@ -58,16 +70,5 @@ router.delete(
   isAuthenticated,
   async (req, res) => await logOut(req, res)
 );
-
-router.delete("/close-account", isAuthenticated, async (req, res) => {
-  const user = await User.findById(req.session.passport.user);
-  try {
-    await user.delete();
-    await logOut(req, res);
-    res.status(200).redirect("/login");
-  } catch (err) {
-    res.status(500).redirect("/");
-  }
-});
 
 export { router as login };

@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="../styles/normalize.css" type="text/css" />
+    <link rel="stylesheet" href="../styles/style.css" type="text/css" />
     <%- include ("./includes/resources.ejs") %>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <meta name="title" content="Register" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="og:title" content="Register" />
     <title>Register</title>
 </head>
 <body>
+    <%
+        const TooManyRequests = typeof tooManyRequests !== "undefined" && "disabled=disabled aria-disabled=true" 
+    %>
     <div class="container mt-5 mb-5">
         <div class="card shadow">
             <div class="card-header">
@@ -18,13 +26,25 @@
             </div>
             <div class="card-body">
                 <form id="register-form" autocomplete="on" class="needs-validation" novalidate="novalidate">
-                    <div id="register-alert" class="alert alert-danger d-none">
-                        <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
-                        Failed to register.
-                    </div>
+                    <% if (!TooManyRequests) { %>
+                        <div id="register-alert" class="alert alert-danger d-none">
+                            <strong class="semi-bold">
+                                <span class="fas fa-exclamation-circle" aria-hidden="true"></s>
+                                Error!
+                            </strong>
+                            <p>Failed to register.</p>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-danger">
+                            <strong class="semi-bold">
+                                Error!
+                            </strong>
+                            Too many requests, please try again later.
+                        </div>
+                    <% } %>
                     <div class="form-floating mb-4">
                         <input id="username" autocomplete="username" name="username" type="text" placeholder="Username" class="form-control" pattern="^(?=^[^_]+_?[^_]+$)\w{3,20}$" required="required" aria-required="true"
-                        aria-describedby="username-hint" aria-errormessage="username-invalid-feedback">
+                        aria-describedby="username-hint" aria-errormessage="username-invalid-feedback" <%= TooManyRequests || "" %> >
                         <label for="username">
                             Username
                         </label>
@@ -37,7 +57,7 @@
                     </div>
                     <div class="form-floating mb-4">
                         <input id="email" name="email" autocomplete="email" type="text" placeholder="Username" class="form-control" pattern='^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$' required="required" aria-required="true"
-                        aria-describedby="email-hint" aria-errormessage="email-invalid-feedback">
+                        aria-describedby="email-hint" aria-errormessage="email-invalid-feedback" <%= TooManyRequests || "" %> >
                         <label for="email">
                             Email
                         </label>
@@ -50,7 +70,7 @@
                     </div>
                     <div class="form-floating mb-4">
                         <input id="password" name="password" autocomplete="current-password" type="password" placeholder="Username" class="form-control" minlength="8" required="required" aria-required="true"
-                        aria-describedby="password-hint" aria-errormessage="password-invalid-feedback">
+                        aria-describedby="password-hint" aria-errormessage="password-invalid-feedback" <%= TooManyRequests || "" %> >
                         <label for="password">
                             Password
                         </label>
@@ -61,7 +81,7 @@
                             Password must be at least 8 characters.
                         </div>
                     </div>
-                    <button type="submit" disabled class="btn btn-primary">Register</button>
+                    <button type="submit" disabled="disabled" aria-disabled="true" class="btn btn-primary">Register</button>
                 </form>
             </div>
             <div class="card-footer text-center">
@@ -78,109 +98,8 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-    (function() {
-        const username = $("#username"),
-        email = $("#email"),
-        password = $("#password"),
-        alert = $("#register-alert"),
-        submitBtn = $("form > button[type='submit']");
-        [username, email, password].forEach(field => {
-            field.on("input", function() {
-                if (username.val() && email.val() && password.val()) {
-                    submitBtn.removeDisableAttr();
-                    return;
-                } 
-                submitBtn.addDisableAttr();
-            });
-        });
-        [username, email].forEach(field => {
-            field.on("change", async function() {
-                const name = $(this).prop("name"),
-                value = $(this).val(),
-                invalidFeedback = $("#" + name + "-invalid-feedback"),
-                hint = $("#" + name + "-hint"),
-                request = new Request(
-                    `/available?field=${encodeURIComponent(name)}&value=${encodeURIComponent(value)}`, {
-                    method: "POST",
-                    headers: new Headers({
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    }),
-                });
-                const response = await fetch(request);
-                const body = await response.json();
-                if (body.wasTaken) {
-                    hint.bootstrapHide();
-                    console.log(name.toString())
-                    invalidFeedback.html(`
-                        ${name[0].toUpperCase() + name.slice(1)} was taken. If it is yours, please <a href="/login">Login</a>.
-                    `);
-                    hint.bootstrapHide();
-                    field.showValidate();
-                    throw new Error("Credentials was taken.");
-                }
-                hint.bootstrapShow();
-                field.hideValidate();
-                invalidFeedback.html(`
-                    ${name === "username" 
-                    ? "Username only contains alphabetic characters (a-z, A-Z), numeric characters (0-9), include an underscore(_), and can be from 3 characters to 20 characters." 
-                    : "Email does not match, please follow this pattern: <em>name@example.domain</em>."}
-                `);
-            });
-        });
-        const forms = document.querySelectorAll(".needs-validation");
-        Array.prototype.slice.call(forms).forEach(form => {
-            form.addEventListener("submit", async event => {
-                event.preventDefault();
-                event.stopPropagation();
-                submitBtn.addDisableAttr();
-                form.classList.add("was-validated");
-                if (!form.checkValidity()) {
-                    submitBtn.removeDisableAttr();
-                    ["username", "email", "password"]
-                    .forEach(field => {
-                        $("#" + field + "-hint").bootstrapHide();
-                    });
-                    return;
-                }
-                const request = new Request("/register", {
-                    method: "POST",
-                    headers: new Headers({
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    }),
-                    body: JSON.stringify({
-                        username: username.val(),
-                        email: email.val(),
-                        password: password.val(),
-                    }),
-                });
-                const response = await fetch(request);
-                try {
-                    var body = await response.json();
-                } catch {
-                    body = void 0;
-                }
-                if (!response.ok) {
-                    const message = body?.message || "Failed to register."
-                    submitBtn.removeDisableAttr();
-                    alert.attr("class", "alert alert-danger")
-                        .html(`
-                        <strong class="semi-bold">
-                            Error!
-                        </strong>
-                        <p>${message}</p>
-                    `);
-                    throw new Error(message);
-                }
-                username.off("input").off("change");
-                email.off("input").off("change");
-                password.off("input");
-                redirect(body.link);
-            });
-        });
-    })();
-    </script>
+    <% if (!TooManyRequests) { %>
+        <script type="text/javascript" src="../public/js/register.js" defer="defer"></script>
+    <% } %>
 </body>
 </html>

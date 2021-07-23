@@ -1,4 +1,5 @@
 "use strict";
+
 import mongoose from "mongoose";
 import crypto from "crypto";
 import { compare } from "bcrypt";
@@ -108,7 +109,9 @@ UserSchema.statics.hasValidVerificationUrl = (path, query) => {
     crypto.timingSafeEqual(
       Buffer.from(signature),
       Buffer.from(query.signature)
-    ) && +query.expires > Date.now()
+    ) && (+query.expires > Date.now() &&
+			+query.expires - Date.now() <= env.EMAIL_VERIFICATION_TIMEOUT
+		)
   );
 };
 

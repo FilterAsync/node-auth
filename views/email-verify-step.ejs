@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../public/styles/normalize.css" type="text/css" />
-    <link rel="stylesheet" href="../public/styles/customize.css" type="text/css" />
+    <link rel="stylesheet" href="../public/styles/style.css" type="text/css" />
     <%- include ("./includes/resources.ejs") %>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -39,44 +39,7 @@
                     </button>
                     <div id="resend-alert" class="alert alert-danger mt-4 d-none"></div>
                 </div>
-                <script type="text/javascript">
-                (function() {
-                    const resendBtn = $("#resend-btn"),
-                    alert = $("#resend-alert");
-                    resendBtn.on("click", async function() {
-                        resendBtn.addDisableAttr();
-                        const params = new URLSearchParams(location.search);
-                        const request = new Request(
-                            "/email/resend?email=" + params.get("email"), {
-                                method: "POST",
-                                headers: new Headers({
-                                    "Accept": "application/json",
-                                }),
-                            },
-                        );
-                        const response = await fetch(request),
-                        body = await response.json();
-                        if (!response.ok) {
-                            resendBtn.removeDisableAttr();
-                            alert.attr("class", "alert alert-danger")
-                            .html(`
-                                <strong class="semi-bold">
-                                    Error!
-                                </strong>
-                                <p>${body.message}</p>
-                            `);
-                            throw new Error(body.message);
-                        }
-                        alert.attr("class", "alert alert-success")
-                            .html(`
-                            <strong class="semi-bold">
-                                Success!
-                            </strong>
-                            <p>${body.message}</p>
-                        `);
-                    });
-                })();
-                </script>
+                <script type="text/javascript" src="../public/js/email-resend.js" defer="defer"></script>
             </div>
         </div>
     </div>

@@ -1,3 +1,5 @@
+"use strict";
+
 import mongoose from "mongoose";
 import crypto from "crypto";
 import * as dotenv from "dotenv";
@@ -44,8 +46,10 @@ PasswordResetSchema.methods.isValidUrl = function (ptt) {
   const hash = PasswordReset.hashedToken(ptt);
 
   return (
-    crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(this.token)) &&
-    +this.expiredAt > Date.now()
+    crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(this.token)) && (
+			+this.expiredAt > Date.now() &&
+			+this.expiredAt - Date.now() <= env.PASSWORD_RESET_TIMEOUT
+		)
   );
 };
 
