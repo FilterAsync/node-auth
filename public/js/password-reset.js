@@ -1,4 +1,4 @@
-(function() {
+(function($) {
 	"use strict";
 	const newPassword = $("#new-password"),
 	newPasswordConfirm = $("#repeat-new-password"),
@@ -77,4 +77,4 @@
 			}, 500);
 		});
 	});
-})();
+})(window.jQuery);

@@ -1,4 +1,4 @@
-(function() {
+(function($) {
 	"use strict";
 
 	const username = $("#username"),
@@ -112,4 +112,4 @@
 			redirect(body.link);
 		});
 	});
-})();
+})(window.jQuery);

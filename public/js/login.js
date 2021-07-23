@@ -1,4 +1,4 @@
-(function() {
+(function($) {
 	"use strict";
 	const email = $("#credential"),
 	password = $("#password"),
@@ -29,6 +29,7 @@
 	Array.prototype.slice.call(forms).forEach((form) => {
 		form.addEventListener("submit", (event) => {
 			[email, password,].forEach((e) => e.prop("readonly", true));
+			submitBtn.addDisableAttr();
 			if (!form.checkValidity()) {
 				event.preventDefault();
 				event.stopPropagation();
@@ -39,4 +40,4 @@
 			form.classList.add("was-validated");
 		}, false);
 	});
-})();
+})(window.jQuery);

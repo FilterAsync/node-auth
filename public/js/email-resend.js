@@ -1,4 +1,4 @@
-(function() {
+(function($) {
 	const resendBtn = $("#resend-btn"),
 	alert = $("#resend-alert");
 	resendBtn.on("click", async function() {
@@ -33,4 +33,4 @@
 			<p>${body.message}</p>
 		`);
 	});
-})();
+})(window.jQuery);

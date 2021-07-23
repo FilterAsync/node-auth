@@ -1,4 +1,4 @@
-(function() {
+(function($) {
 	"use strict";
 	const submitBtn = $("#submit-btn"),
 	alert = $("#reset-password-alert"),
@@ -58,4 +58,4 @@
 			submitBtn.text("Resend");
 		});
 	});
-})();
+})(window.jQuery);

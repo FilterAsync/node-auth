@@ -57,15 +57,12 @@ router.get("/email/verify", isUnauthenticated, async (req, res) => {
   const user = await User.findById(id);
 
   if (!user || !User.hasValidVerificationUrl(req.originalUrl, req.query)) {
-    res.status(400).json({
-      message: "Invalid activation link.",
-      status: "404",
-    });
+    res.status(400).redirect("/login");
     return;
   }
 
   if (user.verifiedAt) {
-    res.status(400).redirect("/register");
+    res.status(400).redirect("/login");
     return;
   }
 
@@ -183,27 +180,41 @@ router.post(
   }
 );
 
-router.post("/email/resend", isUnauthenticated, async (req, res) => {
-  const { email } = req.query;
+router.post("/email/resend",
+	isUnauthenticated,
+	rateLimit(
+		rateLimitInit({
+			windowMs: 2 * 60 * 1E3,
+			max: 1,
+			handler: (req, res) => {
+				res.status(429).json({
+					message: "You only can resend again after 2 minutes."
+				});
+			}
+		}),
+	),
+	async (req, res) => {
+		const { email } = req.query;
 
-  const user = await User.findOne({
-		email: email
-	}).select("username email visibleEmail verifiedAt");
+		const user = await User.findOne({
+			email: email
+		}).select("username email visibleEmail verifiedAt");
 
-  if (user && !user.verifiedAt) {
-    const verifyLink = user.createVerificationUrl();
+		if (user && !user.verifiedAt) {
+			const verifyLink = user.createVerificationUrl();
 
-    await sendMail({
-      to: user.visibleEmail,
-      subject: "Email verification",
-      html: message(user, verifyLink),
-    });
-  }
+			await sendMail({
+				to: user.visibleEmail,
+				subject: "Email verification",
+				html: message(user, verifyLink),
+			});
+		}
 
-  res.status(200).json({
-    message: `Successfully resent email.`,
-  });
-});
+		res.status(200).json({
+			message: "Successfully resent email.",
+		});
+	}
+);
 
 router.post("/available", isUnauthenticated, async (req, res) => {
   const field = req.query.field || "username";

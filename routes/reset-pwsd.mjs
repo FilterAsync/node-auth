@@ -6,6 +6,8 @@ import { PasswordReset } from "../models/pwsd-reset.mjs";
 import { sendMail } from "../mail.mjs";
 import { resetPassword } from "../auth.mjs";
 import * as dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
+import { rateLimitInit } from "../config/index.mjs";
 
 const { env } = process;
 
@@ -57,6 +59,17 @@ router.use(express.json());
 router.post(
   "/reset-password",
   isUnauthenticated,
+	rateLimit(
+		rateLimitInit({
+			windowMs: 2 * 60 * 1E3,
+			max: 1,
+			handler: (req, res) => {
+				res.status(429).json({
+					message: "You only can resend again after 2 minutes.",
+				});
+			},
+		}),
+	),
   validContentType(),
   async (req, res) => {
     const { email } = req.body;

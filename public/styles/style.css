@@ -12,6 +12,10 @@ span.badge.semi-bold {
     font-weight: 500 !important;
 }
 
+p.allow-multi-line {
+    white-space: pre-line !important;
+}
+
 hr {
     border-top: 1px solid hsl(230, 15%, 65%) !important;
 }
@@ -24,8 +28,8 @@ textarea {
     resize: vertical;
 }
 
-*.text-secondary > a.disabled {
-    color: hsla(0, 0%, 80%, .92);
+a.disabled {
+    color: hsla(0, 0%, 80%, 0.9);
     pointer-events: none;
 }
 
