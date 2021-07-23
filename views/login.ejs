@@ -25,10 +25,8 @@
                 <%
                     const isError = !!messages.error
                     const isExceeded = tooManyRequests && "disabled=disabled aria-disabled=true"
-                    const RedirectUri = typeof redirectUri !== "undefined" && redirectUri
-                    const SessionExpired = typeof sessionExpired !== "undefined" && sessionExpired
                 %>
-                <form class="needs-validation <%= isError && "was-validated" || "" %>" action="/login<%= RedirectUri ? "?redirectUri=" + encodeURIComponent(RedirectUri) : "" %>" autocomplete="on" method="POST" novalidate="novalidate">
+                <form class="needs-validation <%= isError && "was-validated" || "" %>" action="/login<%= redirectUri ? "?redirectUri=" + encodeURIComponent(redirectUri) : "" %>" autocomplete="on" method="POST" novalidate="novalidate">
                     <% if (isExceeded) { %>
                         <div class="alert alert-danger">
                             <strong class="semi-bold">
@@ -41,13 +39,23 @@
                         </div>
                     <% } else if (isError) { %>
                         <div class="alert alert-danger">
-                            <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
-                            <%= messages.error + "." %>
+                            <strong class="semi-bold">
+                                <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
+                                Error!
+                            </strong>
+                            <p class="mb-0">
+                                <%= messages.error + "." %>
+                            </p>
                         </div>    
-                    <% } else if (SessionExpired === "true") { %>
+                    <% } else if (sessionExpired === "true") { %>
                         <div class="alert alert-danger">
-                            <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
-                            Your session has expired. Please log in.
+                            <strong class="semi-bold">
+                                <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
+                                Your session has expired. Please log in.
+                            </strong>
+                            <p class="mb-0">
+                                Your session has expired. Please log in.
+                            </p>
                         </div>
                     <% } %>
                     <div class="form-floating mb-4">

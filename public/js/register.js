@@ -57,21 +57,14 @@
 		form.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			event.stopPropagation();
-			disableMultipleElements([
-				username,
-				email,
-				password,
-				submitBtn,
-			]);
+			[username, email, password,].forEach((e) => e.prop("readonly", true));
+			submitBtn.addDisableAttr();
 
 			form.classList.add("was-validated");
 			if (!form.checkValidity()) {
-				enableMultipleElements([
-					username,
-					email,
-					password,
-					submitBtn,
-				]);
+				[username, email, password, submitBtn,].forEach((e) => {
+					e.prop("readonly", false).prop("disabled", false);
+				});
 				["username", "email", "password"]
 				.forEach((field) => {
 					$("#" + field + "-hint").bootstrapHide();
@@ -97,12 +90,9 @@
 				body = void 0;
 			}
 			if (!response.ok) {
-				enableMultipleElements([
-					username,
-					email,
-					password,
-					submitBtn,
-				]);
+				[username, email, password, submitBtn,].forEach((e) => {
+					e.prop("readonly", false).prop("disabled", false);
+				});
 				const message = body?.message || "Failed to register.";
 				submitBtn.removeDisableAttr();
 				alert.attr("class", "alert alert-danger")

@@ -21,17 +21,12 @@
 			event.preventDefault();
 			event.stopPropagation();
 			form.classList.add("was-validated");
-			disableMultipleElements([
-				newPassword,
-				newPasswordConfirm,
-				submitBtn,
-			]);
+			[newPassword,newPasswordConfirm,].forEach((e) => e.prop("readonly", true));
+			submitBtn.removeDisableAttr();
 			if (!form.checkValidity()) {
-				enableMultipleElements([
-					newPassword,
-					newPasswordConfirm,
-					submitBtn,
-				]);
+				[newPassword, newPasswordConfirm, submitBtn,].forEach((e) =>
+					e.prop("readonly", false).prop("disabled", false)
+				);
 				return;
 			}
 
@@ -54,7 +49,7 @@
 
 			submitBtn.removeDisableAttr().text("Resend");
 			if (!response.ok) {
-					enableMultipleElements([newPassword, newPasswordConfirm,]);
+					[newPassword, newPasswordConfirm,].forEach((e) => e.prop("readonly", false));
 					alert.attr("class", "alert alert-danger")
 						.html(`
 							<strong class="semi-bold">

@@ -28,11 +28,13 @@
 	const forms = document.querySelectorAll(".needs-validation");
 	Array.prototype.slice.call(forms).forEach((form) => {
 		form.addEventListener("submit", (event) => {
-			disableMultipleElements([email, password, submitBtn,]);
+			[email, password,].forEach((e) => e.prop("readonly", true));
 			if (!form.checkValidity()) {
 				event.preventDefault();
 				event.stopPropagation();
-				enableMultipleElements([email, password, submitBtn,]);
+				[email, password, submitBtn,].forEach((e) => {
+					e.prop("readonly", false).prop("disabled", false);
+				});
 			}
 			form.classList.add("was-validated");
 		}, false);
