@@ -8,7 +8,6 @@ import { logOut } from "../auth.mjs";
 import passport from "passport";
 import rateLimit from "express-rate-limit";
 import { rateLimitInit } from "../config/index.mjs";
-import ms from "ms";
 
 const router = express.Router({
   caseSensitive: true,
@@ -32,12 +31,12 @@ router.post(
   isUnauthenticated,
 	rateLimit(
 		rateLimitInit({
-			windowMs: ms("15m"),
+			windowMs: 1 * 60 * 60 * 1E3,
 			max: 3,
 			handler: (_req, res) => {
 				res.status(429).render("login", { tooManyRequests: true, });
 			},
-		})
+		}),
 	),
   passport.authenticate("local", {
     failureRedirect: "/login",
@@ -49,7 +48,7 @@ router.post(
         "rem-me",
         `{"username":"${req.body.eou}","password":"${req.body.password}"}`,
         {
-          maxAge: ms("7d"),
+          maxAge: 24 * 60 * 60 * 7 * 1E3,
         }
       );
     } else {

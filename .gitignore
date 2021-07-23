@@ -2,8 +2,7 @@
 /.vscode
 /secrets
 /.env
+*.rest
+api.*
 npm-debug.log
 yarn-error.log
-*.rest
-*.http
-api.rest

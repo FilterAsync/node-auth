@@ -10,7 +10,6 @@ import * as bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import { rateLimitInit } from "../config/index.mjs";
-import ms from "ms";
 
 const { env } = process;
 
@@ -113,15 +112,15 @@ router.post(
   isUnauthenticated,
 	rateLimit(
 		rateLimitInit({
-			windowMs: ms("1d"),
+			windowMs: 24 * 60 * 60 * 1E3,
 			max: 3,
 			handler: (_req, res) => {
 				res.status(429).json({
 					message: "Too many requests, please try again later.",
 				});
-			}
-		}
-	)),
+			},
+		}),
+	),
   validContentType(),
   async (req, res) => {
     const { username, email, password } = req.body;
