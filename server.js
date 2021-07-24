@@ -11,12 +11,16 @@ if (ENV.NODE_ENV !== "production") {
 
 const PORT = +ENV.PORT || 8080;
 
+const Prod = ENV.NODE_ENV === "production";
+
 (async function () {
-  await mongoose.connect(ENV.MONGODB_URI, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-  });
+  await mongoose.connect(
+		Prod ? ENV.MONGODB_URI : ENV.MONGODB_URI_LOCAL, {
+    	useUnifiedTopology: true,
+    	useNewUrlParser: true,
+    	useCreateIndex: true,
+		}
+	);
   console.log("Database connection succeeded.");
   const server = createApp(SessionStore);
   server.listen(PORT, function () {

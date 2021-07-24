@@ -12,15 +12,21 @@ if (ENV.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
+const Prod = ENV.NODE_ENV === "production";
+
+const RedisPort 		 =  Prod  ?  +ENV.REDIS_PORT 		 :  +ENV.REDIS_PORT_LOCAL;
+const RedisHost 		 =  Prod  ?  ENV.REDIS_HOST 		 :  ENV.REDIS_HOST_LOCAL;
+const RedisPassword  =  Prod  ?  ENV.REDIS_PASSWORD  :  ENV.REDIS_PASSWORD_LOCAL;
+
 const RedisOptions = {
-	port: +ENV.REDIS_PORT,
-	host: ENV.REDIS_HOST,
-	password: ENV.REDIS_PASSWORD,
+	port: 		RedisPort,
+	host: 		RedisHost,
+	password: RedisPassword,
 }
 
 const RedisSessionStore = connectRedis(session);
 
-const client = new Redis(ENV.REDIS_HOST, RedisOptions);
+const client = new Redis(RedisHost, RedisOptions);
 
 export const SessionStore = new RedisSessionStore({ client: client, });
 
