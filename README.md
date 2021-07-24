@@ -14,4 +14,7 @@ I tried my best to do an authentication this difficult. However it's my first ex
 ## Inspiration
 This repository is inspired by [alex996's Node Auth](https://github.com/alex996/node-auth)
 
+## Web
+This repository currently can be visit through (here)[https://nas-backup.herokuapp.com/]
+
 <3
