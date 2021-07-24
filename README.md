@@ -7,6 +7,11 @@ I tried my best to do an authentication this difficult. However it's my first ex
 - [x] Email verification + Resend email
 - [x] Password Reset
 - [x] Rate Limiting (Too Many Requests)
-- [ ] Persistent Login (Remember Me)
+- [x] Persistent Login (Remember Me)
 - [ ] Login reCaptcha verification trap *(redirects to a verification page if the credentials are incorrect.)*
 - [ ] Facebook/Google/Twitter external Login
+
+## Inspiration
+This repository is inspired by [alex996's Node Auth](https://github.com/alex996/node-auth)
+
+<3
