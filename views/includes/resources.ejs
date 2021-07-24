@@ -22,7 +22,7 @@
         showValidate:function(){$(this).addClass("is-invalid");},
         hideValidate:function(){$(this).removeClass("is-invalid");}
     });
-    window.redirect=url=>location.href=!url.startsWith("/")?url="/"+url:url;
+    window.redirect=url=>location.href=!url.startsWith("/")?"/"+url:url;
     navigator.cookieEnabled || (function() {
         setTimeout(function() {
             console.warn("Cookies are disabled.");

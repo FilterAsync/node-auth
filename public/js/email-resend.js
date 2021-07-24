@@ -17,7 +17,7 @@
 		if (!response.ok) {
 			resendBtn.removeDisableAttr();
 			alert.attr("class", "alert alert-danger")
-			.html(`
+				.html(`
 				<strong class="semi-bold">
 					Error!
 				</strong>

@@ -1,16 +1,15 @@
 "use strict";
-
 import * as dotenv from "dotenv";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
 export const sessionOptions = {
-  secret: env.SESSION_SECRET,
-  name: env.SESSION_NAME,
+  secret: ENV.SESSION_SECRET,
+  name: ENV.SESSION_NAME,
 	resave: false,
   saveUninitialized: true,
 };

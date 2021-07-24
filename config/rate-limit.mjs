@@ -1,5 +1,4 @@
 "use strict";
-
 import { RateLimitStore } from "./index.mjs"
 
 export const rateLimitInit = (options) => {

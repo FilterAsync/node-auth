@@ -1,19 +1,20 @@
+"use strict";
 import * as dotenv from "dotenv";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
 export const SmtpOptions = {
-  host: env.SMTP_HOST,
-  port: +env.SMTP_PORT,
+  host: ENV.SMTP_HOST,
+  port: +ENV.SMTP_PORT,
   secure: true,
   auth: {
-    user: env.BOT_EMAIL,
-    pass: env.BOT_PASS,
+    user: ENV.BOT_EMAIL,
+    pass: ENV.BOT_PASS,
   },
 };
 
-export const MailFrom = `noreply@${env.BOT_EMAIL}`;
+export const MailFrom = `noreply@${ENV.BOT_EMAIL}`;

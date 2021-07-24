@@ -2,10 +2,12 @@
 	"use strict";
 	const submitBtn = $("#submit-btn"),
 	alert = $("#reset-password-alert"),
-	email = $("#email");
+	email = $("#email"),
+	feedback = $("#email-invalid-feedback");
 	email.on("input", function() {
 		const regex = new RegExp($(this).attr("pattern"), "g");
 		if (!regex.test($(this).val())) {
+			feedback.text("Email does not match.");
 			$(this).showValidate();
 			submitBtn.addDisableAttr();
 			return;
@@ -40,7 +42,9 @@
 						Error!
 					</strong>
 					<p>
-						Sorry we cannot send an email to ${email.val()}.
+						Sorry we cannot send an email to <strong class="semi-bold">
+							${email.val().length > 30 ? email.val().substring(0,30).concat("...") : email.val().concat(".")}
+						</strong>
 					</p>
 				`);
 				throw new Error(body.message || "Failed to reset password.");

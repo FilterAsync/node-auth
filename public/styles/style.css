@@ -17,7 +17,7 @@ p.allow-multi-line {
 }
 
 hr {
-    border-top: 1px solid hsl(230, 15%, 65%) !important;
+    border-top: 1px solid hsla(230, 15%, 80%, 0.8) !important;
 }
 
 label.auto-capitalize {
@@ -31,6 +31,11 @@ textarea {
 a.disabled {
     color: hsla(0, 0%, 80%, 0.9);
     pointer-events: none;
+}
+
+span.huge-char {
+    font-size: 2rem;
+    font-weight: 600;
 }
 
 div.spinner-grow.spinner-xl,

@@ -3,27 +3,27 @@ import * as dotenv from "dotenv";
 import mongoose from "mongoose";
 import { SessionStore } from "./config/index.mjs";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
-const PORT = +env.PORT || 8080;
+const PORT = +ENV.PORT || 8080;
 
 (async function () {
-  await mongoose.connect(env.MONGODB_URI, {
+  await mongoose.connect(ENV.MONGODB_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true,
   });
   console.log("Database connection succeeded.");
-  const app = createApp(SessionStore);
-  app.listen(PORT, function () {
+  const server = createApp(SessionStore);
+  server.listen(PORT, function () {
     console.log(
       "Server is running on PORT %d in %s mode.",
       PORT,
-      app.get("env")
+      server.get("env"),
     );
   });
 })();

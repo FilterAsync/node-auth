@@ -60,6 +60,8 @@
 			[username, email, password,].forEach((e) => e.prop("readonly", true));
 			submitBtn.addDisableAttr();
 
+			const formData = new FormData(form);
+
 			form.classList.add("was-validated");
 			if (!form.checkValidity()) {
 				[username, email, password, submitBtn,].forEach((e) => {
@@ -78,15 +80,15 @@
 					"Accept": "application/json",
 				}),
 				body: JSON.stringify({
-					username: username.val(),
-					email: email.val(),
-					password: password.val(),
+					username: formData.get("username"),
+					email: formData.get("email"),
+					password: formData.get("password"),
 				}),
 			});
 			const response = await fetch(request);
 			try {
 				var body = await response.json();
-			} catch {
+			} catch (err) {
 				body = void 0;
 			}
 			if (!response.ok) {

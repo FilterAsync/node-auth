@@ -43,7 +43,7 @@
                         </div>
                     <% } %>
                     <div class="form-floating mb-4">
-                        <input id="username" autocomplete="username" name="username" type="text" placeholder="Username" class="form-control" pattern="^(?=^[^_]+_?[^_]+$)\w{3,20}$" required="required" aria-required="true"
+                        <input id="username" name="username" autocomplete="username" type="text" placeholder="Username" class="form-control" pattern="^(?=^[^_]+_?[^_]+$)\w{3,20}$" required="required" aria-required="true"
                         aria-describedby="username-hint" aria-errormessage="username-invalid-feedback" <%= TooManyRequests || "" %> >
                         <label for="username">
                             Username

@@ -9,9 +9,9 @@ import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import { rateLimitInit } from "../config/index.mjs";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
@@ -85,7 +85,7 @@ router.post(
       const reset = new PasswordReset({
         userId: user._id,
         token: token,
-        expiredAt: new Date(new Date().getTime() + +env.PASSWORD_RESET_TIMEOUT),
+        expiredAt: new Date(new Date().getTime() + +ENV.PASSWORD_RESET_TIMEOUT),
       });
 
       reset.save();

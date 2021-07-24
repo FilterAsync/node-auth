@@ -2,12 +2,12 @@
 
 import mongoose from "mongoose";
 import crypto from "crypto";
-import { compare } from "bcrypt";
+import { hash, compare } from "bcrypt";
 import * as dotenv from "dotenv";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
@@ -49,7 +49,10 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.methods.gravatar = async function (size = 96) {
-  const hash = crypto.createHash("md5").update(this.visibleEmail).digest("hex");
+  const hash = crypto
+		.createHash("md5")
+		.update(this.visibleEmail)
+		.digest("hex");
 
   return `https://gravatar.com/avatar/${hash}?s=${size}&d=mp`;
 };
@@ -72,30 +75,38 @@ UserSchema.statics.matchesEmail = (email) =>
 
 UserSchema.methods.createVerificationUrl = function () {
   const token = crypto.createHash("sha1").update(this.email).digest("hex");
-  const expires = Date.now() + +env.EMAIL_VERIFICATION_TIMEOUT;
+  const expires = Date.now() + +ENV.EMAIL_VERIFICATION_TIMEOUT;
 
-  const url = `${env.APP_ORIGIN}/email/verify?id=${this._id}&token=${token}&expires=${expires}`;
+  const url = `${ENV.APP_ORIGIN}/email/verify?id=${this._id}&token=${token}&expires=${expires}`;
   const signature = User.signVerificationUrl(url);
 
   return `${url}&signature=${signature}`;
 };
 
 UserSchema.statics.signVerificationUrl = (url) =>
-  crypto.createHmac("sha256", env.APP_SECRET).update(url).digest("hex");
+  crypto.createHmac("sha256", ENV.APP_SECRET).update(url).digest("hex");
 
 UserSchema.statics.hasValidVerificationUrl = (path, query) => {
-  const url = `${env.APP_ORIGIN}${path}`;
+  const url = `${ENV.APP_ORIGIN}${path}`;
   const original = url.slice(0, url.lastIndexOf("&"));
   const signature = User.signVerificationUrl(original);
+
+	const { expires } = query;
 
   return (
     crypto.timingSafeEqual(
       Buffer.from(signature),
       Buffer.from(query.signature)
-    ) && (+query.expires > Date.now() &&
-			+query.expires - Date.now() <= env.EMAIL_VERIFICATION_TIMEOUT
+    ) && (+expires > Date.now() &&
+			+expires - Date.now() <= ENV.EMAIL_VERIFICATION_TIMEOUT
 		)
   );
 };
+
+UserSchema.pre("save", async function() {
+	if (this.isModified("password")) {
+		this.password = await hash(this.password, +ENV.BCRYPT_SALT);
+	}
+});
 
 export const User = mongoose.model("User", UserSchema);

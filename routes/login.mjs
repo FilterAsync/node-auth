@@ -31,10 +31,15 @@ router.post(
   isUnauthenticated,
 	rateLimit(
 		rateLimitInit({
-			windowMs: 1 * 60 * 60 * 1E3,
-			max: 3,
+			windowMs: 2 * 60 * 60 * 1E3,
+			max: 10,
 			handler: (_req, res) => {
-				res.status(429).render("login", { tooManyRequests: true, });
+				res.status(429).render("login", {
+						tooManyRequests: true,
+						error: false,
+						redirectUri: false,
+						sessionExpired: false,
+					});
 			},
 		}),
 	),

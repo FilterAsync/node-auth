@@ -24,7 +24,7 @@
             <div class="card-body">
                 <%
                     const isError = !!messages.error
-                    const isExceeded = tooManyRequests && "disabled=disabled aria-disabled=true"
+                    const isExceeded = tooManyRequests && "disabled=disabled readonly=readonly aria-disabled=true aria-readonly=true"
                 %>
                 <form class="needs-validation <%= isError && "was-validated" || "" %>" action="/login<%= redirectUri ? "?redirectUri=" + encodeURIComponent(redirectUri) : "" %>" autocomplete="on" method="POST" novalidate="novalidate">
                     <% if (isExceeded) { %>

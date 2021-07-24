@@ -3,6 +3,7 @@
 /secrets
 /.env
 *.rest
-api.*
+*.http
+test.*
 npm-debug.log
 yarn-error.log

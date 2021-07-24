@@ -6,14 +6,13 @@ import { sendMail } from "../mail.mjs";
 import { validContentType } from "../middleware/valid-mime.mjs";
 import { isUnauthenticated } from "../middleware/auth.mjs";
 import { markAsVerified } from "../auth.mjs";
-import * as bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import { rateLimitInit } from "../config/index.mjs";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
@@ -34,7 +33,7 @@ router.get(
 		const { email, expires } = req.query;
 		let user;
 		if (!+expires || !(+expires > Date.now() &&
-			+expires - Date.now() < env.EMAIL_VERIFICATION_TIMEOUT) ||
+			+expires - Date.now() < ENV.EMAIL_VERIFICATION_TIMEOUT) ||
 			!(user = await User.findOne({
 				email: email,
 			}).select(
@@ -55,18 +54,20 @@ router.get("/email/verify", isUnauthenticated, async (req, res) => {
     return;
   }
   const user = await User.findById(id);
-
-  if (!user || !User.hasValidVerificationUrl(req.originalUrl, req.query)) {
-    res.status(400).redirect("/login");
-    return;
-  }
-
-  if (user.verifiedAt) {
-    res.status(400).redirect("/login");
-    return;
-  }
+	try {
+		if (!user ||
+			!User.hasValidVerificationUrl(req.originalUrl, req.query) ||
+			user.verifiedAt
+		) {
+			res.status(400).redirect("/login");
+			return;
+		}
+	} catch (err) {
+		res.status(500).redirect("/login");
+	}
 
   await markAsVerified(user);
+
   req.logIn(user, (err) => {
     if (err) {
       res.status(500).json({
@@ -96,9 +97,6 @@ function message(user, verifyLink) {
     <br />
     <br />
     <small>
-      Did you receive this email without signing up?
-      <a href="${env.APP_ORIGIN}">Click here</a>.
-      <br />
       This verification link will expire in 12 hours.
     </small>
     `;
@@ -145,14 +143,13 @@ router.post(
       });
       return;
     }
-    const passwordHash = await bcrypt.hash(password, +env.BCRYPT_SALT);
     const emailHash = crypto.createHmac("sha1", email).digest("hex");
 
     const user = new User({
       username: username,
       email: emailHash,
       visibleEmail: email,
-      password: passwordHash,
+      password: password,
 			verifiedAt: null,
     });
     user.avatarUrl = await user.gravatar(96);

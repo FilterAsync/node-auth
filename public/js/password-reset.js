@@ -43,7 +43,7 @@
 			const response = await fetch(request);
 			try {
 				var body = await response.json();
-			} catch {
+			} catch (err) {
 				body = void 0;
 			}
 

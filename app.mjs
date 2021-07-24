@@ -23,7 +23,6 @@ import {
   decodeUriError,
   internalServerError,
 } from "./middleware/index.mjs";
-import * as dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
@@ -33,12 +32,6 @@ import flash from "express-flash";
 
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
-
-const { env } = process;
-
-if (env.NODE_ENV !== "production") {
-  dotenv.config();
-}
 
 export const createApp = (store) => {
   const app = express();
@@ -80,7 +73,7 @@ export const createApp = (store) => {
         "content-length: " + contentLength,
         "-",
         tokens["response-time"](req, res),
-        "ms" + ".",
+        "ms.",
       ].join(" ");
     })
   );

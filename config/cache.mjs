@@ -6,21 +6,21 @@ import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import RedisRateLimitStore from "rate-limit-redis";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
 const RedisOptions = {
-	port: +env.REDIS_PORT,
-	host: env.REDIS_HOST,
-	password: env.REDIS_PASSWORD,
+	port: +ENV.REDIS_PORT,
+	host: ENV.REDIS_HOST,
+	password: ENV.REDIS_PASSWORD,
 }
 
 const RedisSessionStore = connectRedis(session);
 
-const client = new Redis(env.REDIS_HOST, RedisOptions);
+const client = new Redis(ENV.REDIS_HOST, RedisOptions);
 
 export const SessionStore = new RedisSessionStore({ client: client, });
 

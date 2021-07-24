@@ -2,19 +2,20 @@
 	"use strict";
 	const email = $("#credential"),
 	password = $("#password"),
-	submitBtn = $("button[type='submit']");
+	submitBtn = $("button[type='submit']"),
+	remMe = $("#rem-me");
 	try {
 		var remMeData = JSON.parse(
 			decodeURIComponent(document.getCookie("rem-me"))
 		);
-	} catch {
+	} catch (err) {
 		remMeData = void 0;
 	}
 	if (remMeData) {
 		email.val(remMeData?.username);
 		password.val(remMeData?.password);
 		submitBtn.removeDisableAttr();
-		$("#rem-me").prop("checked", true);
+		remMe.prop("checked", true);
 	}
 	[email, password].forEach((field) => {
 		field.on("input", function() {
@@ -33,9 +34,9 @@
 			if (!form.checkValidity()) {
 				event.preventDefault();
 				event.stopPropagation();
-				[email, password, submitBtn,].forEach((e) => {
-					e.prop("readonly", false).prop("disabled", false);
-				});
+				[email, password, submitBtn,].forEach((e) =>
+					e.prop("readonly", false).prop("disabled", false)
+				);
 			}
 			form.classList.add("was-validated");
 		}, false);

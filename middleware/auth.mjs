@@ -4,9 +4,9 @@ import * as dotenv from "dotenv";
 import { Unauthorized } from "../errors/index.mjs";
 import { logOut } from "../auth.mjs";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
@@ -34,7 +34,7 @@ export const active = catchAsync(async (req, res, next) => {
   if (req.isAuthenticated()) {
     const now = Date.now();
 
-    if (now > req.session.createdAt + +env.SESSION_TIMEOUT) {
+    if (now > req.session.createdAt + +ENV.SESSION_TIMEOUT) {
       await logOut(req, res, "/login?session_expired=true");
       return next(new Unauthorized("Session expired"));
     }

@@ -1,9 +1,9 @@
+"use strict";
 import * as dotenv from "dotenv";
-import * as bcrypt from "bcrypt";
 
-const { env } = process;
+const { env: ENV } = process;
 
-if (env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   dotenv.config();
 }
 
@@ -14,8 +14,9 @@ export const logOut = (req, res, redirect = "/login") => {
         reject(err);
         return;
       }
-      res.clearCookie(env.SESSION_NAME);
+      res.clearCookie(ENV.SESSION_NAME);
       resolve("Success");
+
       res.status(401).redirect(redirect);
     });
   });
@@ -27,6 +28,6 @@ export const markAsVerified = async (user) => {
 };
 
 export const resetPassword = async (user, password) => {
-  user.password = await bcrypt.hash(password, +env.BCRYPT_SALT);
+  user.password = password;
   await user.save();
 };
