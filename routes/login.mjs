@@ -39,7 +39,8 @@ router.post(
 						error: false,
 						redirectUri: false,
 						sessionExpired: false,
-					});
+					}
+				);
 			},
 		}),
 	),
@@ -48,14 +49,22 @@ router.post(
     failureFlash: "Invalid credentials",
   }),
   (req, res) => {
+		console.log(req.cookies);
+		console.log(req.signedCookies);
     if (req.body["rem-me"]) {
-      res.cookie(
-        "rem-me",
-        `{"username":"${req.body.eou}","password":"${req.body.password}"}`,
-        {
-          maxAge: 24 * 60 * 60 * 7 * 1E3,
-        }
-      );
+			if (!req.cookies["rem-me"]) {
+				res.cookie(
+					"rem-me",
+					`{"username":"${
+							Buffer.from(req.body.eou, "binary").toString("hex")
+						}","password":"${Buffer.from(req.body.password, "binary")
+							.toString("hex")
+						}"}`,
+					{
+						maxAge: 24 * 60 * 60 * 7 * 1E3,
+					}
+				);
+			}
     } else {
       res.clearCookie("rem-me");
     }
@@ -67,6 +76,30 @@ router.post(
     req.session.createdAt = Date.now();
     res.status(200).redirect("/");
   }
+);
+
+router.use(express.json());
+
+router.post(
+	"/rem-me/load",
+	isUnauthenticated,
+	async (req, res) => {
+		const { remMeData } = req.body;
+		if (
+			"username" in remMeData &&
+			"password" in remMeData
+		) {
+			const parseData = [
+				Buffer.from(remMeData.username, "hex").toString("binary"),
+				Buffer.from(remMeData.password, "hex").toString("binary"),
+			];
+			res.status(200).json({
+				parseData: parseData,
+			});
+			return;
+		}
+		res.status(400).end();
+	}
 );
 
 router.delete(

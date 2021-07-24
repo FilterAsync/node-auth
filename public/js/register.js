@@ -5,10 +5,13 @@
 	email = $("#email"),
 	password = $("#password"),
 	alert = $("#register-alert"),
-	submitBtn = $("form > button[type='submit']");
-	[username, email, password].forEach((field) => {
+	submitBtn = $("form > button[type='submit']"),
+	confirmPassword = $("#confirm-password");
+	[username, email, password, confirmPassword].forEach((field) => {
 		field.on("input", function() {
-			if (username.val() && email.val() && password.val()) {
+			if (username.val() && email.val() && password.val() && (
+				confirmPassword.val() === password.val()
+			)) {
 				submitBtn.removeDisableAttr();
 				return;
 			}
@@ -83,6 +86,7 @@
 					username: formData.get("username"),
 					email: formData.get("email"),
 					password: formData.get("password"),
+					"confirm-password": formData.get("confirm-password"),
 				}),
 			});
 			const response = await fetch(request);

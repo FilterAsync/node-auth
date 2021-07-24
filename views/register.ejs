@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../styles/normalize.css" type="text/css" />
-    <link rel="stylesheet" href="../styles/style.css" type="text/css" />
+    <link rel="stylesheet" href="../public/styles/normalize.css" type="text/css" />
+    <link rel="stylesheet" href="../public/styles/style.css" type="text/css" />
     <%- include ("./includes/resources.ejs") %>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,7 +14,7 @@
 </head>
 <body>
     <%
-        const TooManyRequests = typeof tooManyRequests !== "undefined" && "disabled=disabled aria-disabled=true" 
+        const TooManyRequests = typeof tooManyRequests !== "undefined" ? "disabled=disabled aria-disabled=true" : "" 
     %>
     <div class="container mt-5 mb-5">
         <div class="card shadow">
@@ -44,7 +44,7 @@
                     <% } %>
                     <div class="form-floating mb-4">
                         <input id="username" name="username" autocomplete="username" type="text" placeholder="Username" class="form-control" pattern="^(?=^[^_]+_?[^_]+$)\w{3,20}$" required="required" aria-required="true"
-                        aria-describedby="username-hint" aria-errormessage="username-invalid-feedback" <%= TooManyRequests || "" %> >
+                        aria-describedby="username-hint" aria-errormessage="username-invalid-feedback" <%= TooManyRequests %> >
                         <label for="username">
                             Username
                         </label>
@@ -56,8 +56,8 @@
                         </div>
                     </div>
                     <div class="form-floating mb-4">
-                        <input id="email" name="email" autocomplete="email" type="text" placeholder="Username" class="form-control" pattern='^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$' required="required" aria-required="true"
-                        aria-describedby="email-hint" aria-errormessage="email-invalid-feedback" <%= TooManyRequests || "" %> >
+                        <input id="email" name="email" autocomplete="email" type="text" placeholder="Email" class="form-control" pattern='^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$' required="required" aria-required="true"
+                        aria-describedby="email-hint" aria-errormessage="email-invalid-feedback" <%= TooManyRequests %> >
                         <label for="email">
                             Email
                         </label>
@@ -69,8 +69,8 @@
                         </div>
                     </div>
                     <div class="form-floating mb-4">
-                        <input id="password" name="password" autocomplete="current-password" type="password" placeholder="Username" class="form-control" minlength="8" required="required" aria-required="true"
-                        aria-describedby="password-hint" aria-errormessage="password-invalid-feedback" <%= TooManyRequests || "" %> >
+                        <input id="password" name="password" autocomplete="current-password" type="password" placeholder="Password" class="form-control" minlength="8" required="required" aria-required="true"
+                        aria-describedby="password-hint" aria-errormessage="password-invalid-feedback" <%= TooManyRequests %> >
                         <label for="password">
                             Password
                         </label>
@@ -79,6 +79,16 @@
                         </small>
                         <div id="password-invalid-feedback" class="invalid-feedback" aria-hidden="true">
                             Password must be at least 8 characters.
+                        </div>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input id="confirm-password" name="confirm-password" autocomplete="current-password" type="password" placeholder="Confirm Password" class="form-control" minlength="8" required="required" aria-required="true"
+                        aria-errormessage="confirm-password-invalid-feedback" <%= TooManyRequests %> >
+                        <label for="confirm-password">
+                            Confirm Password
+                        </label>
+                        <div id="confirm-password-invalid-feedback" class="invalid-feedback" aria-hidden="true">
+                            Password does not match.
                         </div>
                     </div>
                     <button type="submit" disabled="disabled" aria-disabled="true" class="btn btn-primary">Register</button>

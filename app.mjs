@@ -29,6 +29,14 @@ import morgan from "morgan";
 import favicon from "serve-favicon";
 import { sessionOptions } from "./config/index.mjs";
 import flash from "express-flash";
+import cookieParser from "cookie-parser";
+import * as dotenv from "dotenv";
+
+const { env: ENV } = process;
+
+if (ENV.NODE_ENV !== "production") {
+	dotenv.config();
+}
 
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
@@ -47,7 +55,8 @@ export const createApp = (store) => {
   app.use(methodOverride("_method"));
   app.use(helmet());
   app.use(session({ ...sessionOptions, store }));
-  app.use(passport.initialize());
+  app.use(cookieParser(ENV.COOKIE_SECRET));
+	app.use(passport.initialize());
   app.use(passport.session());
 
   passport.serializeUser(serializeUser);
@@ -81,8 +90,12 @@ export const createApp = (store) => {
   app.use(compression());
 
   app.use((_req, res, next) => {
+		// Setting secure HTTP headers (used to block against attackers).
+
     res.set({
-      "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ https://translate.googleapis.com/translate_static/css/translateelement.css; script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ https://www.gstatic.com/recaptcha/releases/; script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/; font-src 'self' 'unsafe-inline' https://use.fontawesome.com/; frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/; img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
+			/*	Note: if you're about to adding a script with an absolute path,
+					please put it into the "Content-Security-Policy" property.	*/
+			"Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ https://translate.googleapis.com/translate_static/css/translateelement.css; script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ https://www.gstatic.com/recaptcha/releases/; script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/; font-src 'self' 'unsafe-inline' https://use.fontawesome.com/; frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/; img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
       "X-XSS-Protection": "1; mode=block",
       "X-Frame-Options": "DENY",
       "X-Content-Type-Options": "nosniff",

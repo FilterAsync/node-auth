@@ -1,7 +1,11 @@
 @charset "UTF-8";
 
 body.fixed-nav {
-  padding-top: 5rem;
+    padding-top: 5rem;
+}
+
+body {
+    padding-bottom: 5rem;
 }
 
 strong.semi-bold,

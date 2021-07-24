@@ -8,6 +8,7 @@ import { resetPassword } from "../auth.mjs";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import { rateLimitInit } from "../config/index.mjs";
+import catchAsync from "express-async-handler";
 
 const { env: ENV } = process;
 
@@ -21,37 +22,44 @@ const router = express.Router({
   strict: true,
 });
 
-router.get("/reset-password", isUnauthenticated, (req, res) =>
+router.get(
+	"/reset-password",
+	isUnauthenticated,
+	(req, res) =>
   res.render("reset-password")
 );
 
-router.get("/password/reset", isUnauthenticated, async (req, res) => {
-  const { id, token } = req.query;
+router.get(
+	"/password/reset",
+	isUnauthenticated,
+	async (req, res) => {
+		const { id, token } = req.query;
 
-  let reset;
+		let reset;
 
-  try {
-    reset = await PasswordReset.findById(id);
-  } catch (err) {
-    res.status(404).render("404");
-    return;
-  }
-  let user;
+		try {
+			reset = await PasswordReset.findById(id);
+		} catch (err) {
+			res.status(404).render("404");
+			return;
+		}
+		let user;
 
-  if (
-    !reset ||
-    !reset.isValidUrl(token) ||
-    !(user = await User.findById(reset.userId).select("username visibleEmail"))
-  ) {
-    res.status(400).json({
-      message: "Page not found",
-      status: "404",
-    });
-    return;
-  }
+		if (
+			!reset ||
+			!reset.isValidUrl(token) ||
+			!(user = await User.findById(reset.userId).select("username visibleEmail"))
+		) {
+			res.status(400).json({
+				message: "Page not found",
+				status: "404",
+			});
+			return;
+		}
 
-  res.render("password-reset", { user: user });
-});
+		res.render("password-reset", { user: user });
+	}
+);
 
 router.use(express.urlencoded({ extended: false }));
 router.use(express.json());
@@ -118,7 +126,10 @@ router.post(
   }
 );
 
-router.post("/password/reset", isUnauthenticated, async (req, res) => {
+router.post(
+	"/password/reset",
+	isUnauthenticated,
+	async (req, res) => {
   const { id, token } = req.query;
   const { password, passwordConfirm } = req.body;
 

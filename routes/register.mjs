@@ -9,6 +9,8 @@ import { markAsVerified } from "../auth.mjs";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import { rateLimitInit } from "../config/index.mjs";
+import assert from "assert";
+import catchAsync from "express-async-handler";
 
 const { env: ENV } = process;
 
@@ -47,7 +49,10 @@ router.get(
 	}
 );
 
-router.get("/email/verify", isUnauthenticated, async (req, res) => {
+router.get(
+	"/email/verify",
+	isUnauthenticated,
+	async (req, res) => {
   const { id, token, expires, signature } = req.query;
   if (!id || !token || !expires || !signature) {
     res.status(404).render("404");
@@ -125,18 +130,29 @@ router.post(
       !password ||
       password.length < 8
     ) {
-      console.log(
-        User.matchesUsername(username),
-        User.matchesEmail(email),
-        password.length < 8
-      );
       res.status(400).json({
         message: "Failed to register.",
       });
       return;
     }
-    const usernameExists = await User.exists({ username: username });
-    const emailExists = await User.exists({ email: email });
+
+		const confirmPassword = req.body["confirm-password"];
+		try {
+			assert.strictEqual(
+				crypto.timingSafeEqual(
+						Buffer.from(password),
+						Buffer.from(confirmPassword),
+					),
+				true,
+			);
+		} catch (err) {
+			res.status(400).json({
+				message: "Password does not match.",
+			});
+			return;
+		}
+    const usernameExists 	= await User.exists({ username: username });
+    const emailExists 		= await User.exists({ email: email });
     if (usernameExists || emailExists) {
       res.status(409).json({
         message: "Username or email was taken.",
@@ -183,7 +199,7 @@ router.post("/email/resend",
 		rateLimitInit({
 			windowMs: 2 * 60 * 1E3,
 			max: 1,
-			handler: (req, res) => {
+			handler: (_req, res) => {
 				res.status(429).json({
 					message: "You only can resend again after 2 minutes."
 				});
@@ -213,20 +229,24 @@ router.post("/email/resend",
 	}
 );
 
-router.post("/available", isUnauthenticated, async (req, res) => {
-  const field = req.query.field || "username";
-  const value = req.query.value || "";
-  res.status(200).json({
-    wasTaken: await User.exists(
-      field === "username"
-        ? {
-            username: value,
-          }
-        : {
-            visibleEmail: value,
-          }
-    ),
-  });
-});
+router.post(
+	"/available",
+	isUnauthenticated,
+	async (req, res) => {
+		const field = req.query.field || "username";
+		const value = req.query.value || "";
+		res.status(200).json({
+			wasTaken: await User.exists(
+				field === "username"
+					? {
+							username: value,
+						}
+					: {
+							visibleEmail: value,
+						}
+			),
+		});
+	}
+);
 
 export { router as register };
