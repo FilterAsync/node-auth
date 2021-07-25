@@ -21,7 +21,6 @@
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "connect-redis": "^6.0.0",
-    "cookie": "^0.4.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "debug": "^2.6.9",
