@@ -100,9 +100,13 @@ router.post(
 	isUnauthenticated,
 	async (req, res) => {
 		const { requestToken } 	= req.query;
+		if (!requestToken) {
+			res.status(400).end();
+			return;
+		}
 		const hashedToken 		 	= RememberMe.hashedToken(requestToken);
 
-		const remMeDoc = await RememberMe.findOne({
+		const remMeDoc 					= await RememberMe.findOne({
 			token: hashedToken,
 		});
 		if (remMeDoc) {
