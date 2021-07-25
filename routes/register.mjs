@@ -113,7 +113,7 @@ router.post(
 	rateLimit({
 		store: new RedisStore({
 			client: client,
-			expiry: ms("1d"),
+			expiry: ms("1d") / 1E3,
 		}),
 		headers: false,
 		max: 3,
