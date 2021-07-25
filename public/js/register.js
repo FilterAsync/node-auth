@@ -1,6 +1,5 @@
 (function($) {
 	"use strict";
-
 	const username = $("#username"),
 	email = $("#email"),
 	password = $("#password"),
@@ -39,10 +38,10 @@
 			if (body.wasTaken) {
 				hint.bootstrapHide();
 				invalidFeedback.html(`
-					${name[0].toUpperCase() + name.slice(1)} was taken. If it is yours, please <a href="/login">Login</a>.
+					${name.toCapitalize()} was taken. If it is yours, please <a href="/login">Login</a>.
 				`);
 				hint.bootstrapHide();
-				field.showValidate();
+				field.showInvalidValidate();
 
 				throw new Error("Credentials was taken.");
 			}

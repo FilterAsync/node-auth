@@ -7,7 +7,8 @@ import {
 import { logOut } from "../auth.mjs";
 import passport from "passport";
 import rateLimit from "express-rate-limit";
-import { rateLimitInit } from "../config/index.mjs";
+import { RememberMe } from "../models/rem-me.mjs";
+import { User } from "../models/user.mjs";
 
 const router = express.Router({
   caseSensitive: true,
@@ -29,9 +30,8 @@ router.use(express.urlencoded({ extended: false }));
 router.post(
   "/login",
   isUnauthenticated,
-	rateLimit(
-		rateLimitInit({
-			windowMs: 2 * 60 * 60 * 1E3,
+	rateLimit({
+			windowMs: 30 * 60 * 1E3,
 			max: 10,
 			handler: (_req, res) => {
 				res.status(429).render("login", {
@@ -39,30 +39,46 @@ router.post(
 						error: false,
 						redirectUri: false,
 						sessionExpired: false,
-					}
+					},
 				);
 			},
-		}),
+		},
 	),
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: "Invalid credentials",
   }),
-  (req, res) => {
-		console.log(req.cookies);
-		console.log(req.signedCookies);
-    if (req.body["rem-me"]) {
+  async (req, res) => {
+		if (req.body["rem-me"] === "on") {
 			if (!req.cookies["rem-me"]) {
+				const { eou, password } = req.body;
+
+				const EoU 		= User.matchesEmail(eou) ? "email" : "username"
+				const user		= await User.findOne(
+					EoU === "email" ? {
+						visibleEmail: eou,
+					} : {
+						username: eou,
+					},
+				);
+
+				const token 	= RememberMe.plaintextToken();
+				const remMe 	= new RememberMe({
+					userId: 		user._id,
+					token: 			token,
+					data: {
+						username: Buffer.from(eou, "binary").toString("hex"),
+						password: Buffer.from(password, "binary").toString("hex"),
+					},
+				});
+				await remMe.save();
+
 				res.cookie(
 					"rem-me",
-					`{"username":"${
-							Buffer.from(req.body.eou, "binary").toString("hex")
-						}","password":"${Buffer.from(req.body.password, "binary")
-							.toString("hex")
-						}"}`,
+					token,
 					{
 						maxAge: 24 * 60 * 60 * 7 * 1E3,
-					}
+					},
 				);
 			}
     } else {
@@ -78,23 +94,33 @@ router.post(
   }
 );
 
-router.use(express.json());
-
 router.post(
-	"/rem-me/load",
+	"/remember-me/load",
 	isUnauthenticated,
 	async (req, res) => {
-		const { remMeData } = req.body;
-		if (
-			"username" in remMeData &&
-			"password" in remMeData
-		) {
-			const parseData = [
-				Buffer.from(remMeData.username, "hex").toString("binary"),
-				Buffer.from(remMeData.password, "hex").toString("binary"),
-			];
+		const { requestToken } 	= req.query;
+		const hashedToken 		 	= RememberMe.hashedToken(requestToken);
+
+		const remMeDoc = await RememberMe.findOne({
+			token: hashedToken,
+		});
+		if (remMeDoc) {
+			if (+remMeDoc.expiredAt < Date.now()) {
+				await remMeDoc.delete();
+				res.clearCookie("rem-me").status(401).json({
+					message: "Remember me token is expired.",
+				});
+				return;
+			}
 			res.status(200).json({
-				parseData: parseData,
+				data: [
+					Buffer.from(
+						remMeDoc.data.username, "hex"
+					).toString("binary"),
+					Buffer.from(
+						remMeDoc.data.password, "hex"
+					).toString("binary"),
+				],
 			});
 			return;
 		}

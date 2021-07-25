@@ -8,9 +8,7 @@ import { isUnauthenticated } from "../middleware/auth.mjs";
 import { markAsVerified } from "../auth.mjs";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
-import { rateLimitInit } from "../config/index.mjs";
 import assert from "assert";
-import catchAsync from "express-async-handler";
 
 const { env: ENV } = process;
 
@@ -110,17 +108,15 @@ function message(user, verifyLink) {
 router.post(
   "/register",
   isUnauthenticated,
-	rateLimit(
-		rateLimitInit({
-			windowMs: 24 * 60 * 60 * 1E3,
-			max: 3,
-			handler: (_req, res) => {
-				res.status(429).json({
-					message: "Too many requests, please try again later.",
-				});
-			},
-		}),
-	),
+	rateLimit({
+		windowMs: 24 * 60 * 60 * 1E3,
+		max: 3,
+		handler: (_req, res) => {
+			res.status(429).json({
+				message: "Too many requests, please try again later.",
+			});
+		},
+	}),
   validContentType(),
   async (req, res) => {
     const { username, email, password } = req.body;
@@ -195,17 +191,15 @@ router.post(
 
 router.post("/email/resend",
 	isUnauthenticated,
-	rateLimit(
-		rateLimitInit({
-			windowMs: 2 * 60 * 1E3,
-			max: 1,
-			handler: (_req, res) => {
-				res.status(429).json({
-					message: "You only can resend again after 2 minutes."
-				});
-			}
-		}),
-	),
+	rateLimit({
+		windowMs: 2 * 60 * 1E3,
+		max: 1,
+		handler: (_req, res) => {
+			res.status(429).json({
+				message: "You only can resend again after 2 minutes."
+			});
+		},
+	}),
 	async (req, res) => {
 		const { email } = req.query;
 

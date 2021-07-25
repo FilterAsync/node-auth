@@ -8,12 +8,12 @@
 		const regex = new RegExp($(this).attr("pattern"), "g");
 		if (!regex.test($(this).val())) {
 			feedback.text("Email does not match.");
-			$(this).showValidate();
+			$(this).showInvalidValidate();
 			submitBtn.addDisableAttr();
 			return;
 		}
 		submitBtn.removeDisableAttr();
-		$(this).hideValidate();
+		$(this).hideInvalidValidate();
 	});
 	const forms = document.querySelectorAll(".needs-validation");
 	Array.prototype.slice.call(forms).forEach((form) => {
@@ -41,7 +41,7 @@
 						<span class="fas fa-exclamation-circle" aria-hidden="true"></span>
 						Error!
 					</strong>
-					<p>
+					<p class="mb-0">
 						Sorry we cannot send an email to <strong class="semi-bold">
 							${email.val().length > 30 ? email.val().substring(0,30).concat("...") : email.val().concat(".")}
 						</strong>
@@ -55,7 +55,7 @@
 					<span class="fas fa-check-circle" aria-hidden="true"></span>
 					Success!
 				</strong>
-				<p>
+				<p class="mb-0">
 					We've sent an email to <strong class="semi-bold">${email.val()}</strong>.
 				</p>
 			`);

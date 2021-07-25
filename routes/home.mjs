@@ -1,10 +1,9 @@
 "use strict";
-import express, { Router } from "express";
+import { Router } from "express";
 import { User } from "../models/user.mjs";
 import { isAuthenticated } from "../middleware/auth.mjs";
-import catchAsync from "express-async-handler";
 
-const router = express.Router({
+const router = Router({
   caseSensitive: true,
   mergeParams: true,
   strict: true,

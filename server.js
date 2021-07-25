@@ -21,7 +21,7 @@ const Prod = ENV.NODE_ENV === "production";
     	useCreateIndex: true,
 		}
 	);
-  console.log("Database connection succeeded.");
+  console.log("MongoDB connection succeeded.");
   const server = createApp(SessionStore);
   server.listen(PORT, function () {
     console.log(

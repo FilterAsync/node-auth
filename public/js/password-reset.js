@@ -56,7 +56,7 @@
 								<span class="fas fa-exclamation-circle" aria-hidden="true"></span>
 								Error!
 							</strong>
-							<p>
+							<p class="mb-0">
 								${body?.message || "Failed to reset password."}
 							</p>
 					`);
@@ -68,7 +68,7 @@
 						<span class="fas fa-check-circle" aria-hidden="true"></span>
 						Success!
 					</strong>
-					<p>
+					<p class="mb-0">
 						Successfully changed password. Please wait a few moment...
 					</p>
 			`);

@@ -24,7 +24,7 @@ const PasswordResetSchema = new mongoose.Schema(
       createdAt: true,
       updatedAt: false,
     },
-  }
+  },
 );
 
 PasswordResetSchema.pre("save", function () {
@@ -33,7 +33,7 @@ PasswordResetSchema.pre("save", function () {
   }
   if (!this.expiredAt) {
     this.expiredAt = new Date(
-      new Date().getTime() + +ENV.PASSWORD_RESET_TIMEOUT
+      new Date().getTime() + +ENV.PASSWORD_RESET_TIMEOUT,
     );
   }
 });

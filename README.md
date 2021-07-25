@@ -7,11 +7,10 @@ An authentication app built with JQuery, Bootstrap 5, Express, MongoDB and Redis
 - [x] Email verification + Resend email
 - [x] Password Reset
 - [x] Rate Limiting (Too Many Requests)
-- [ ] Persistent Login (Remember Me)
+- [x] Persistent Login (Remember Me)
 - [ ] Login reCaptcha verification trap *(redirects to a verification page if the credentials are incorrect several times.)*
 
 ## TODO
-- Reorganize cookies (Remember Me)
 - Sign reCaptcha verification
 
 ## Inspiration

@@ -19,6 +19,7 @@
 			alert.attr("class", "alert alert-danger")
 				.html(`
 				<strong class="semi-bold">
+					<span class="fas fa-exclamation-circle" aria-hidden="true"></span>
 					Error!
 				</strong>
 				<p>${body.message}</p>
@@ -28,9 +29,10 @@
 		alert.attr("class", "alert alert-success")
 			.html(`
 			<strong class="semi-bold">
+				<span class="fas fa-check-circle" aria-hidden="true"></span>
 				Success!
 			</strong>
-			<p>${body.message}</p>
+			<p class="mb-0">${body.message}</p>
 		`);
 	});
 })(window.jQuery);

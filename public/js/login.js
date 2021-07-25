@@ -4,21 +4,14 @@
 	password = $("#password"),
 	submitBtn = $("button[type='submit']"),
 	remMe = $("#rem-me");
-	try {
-		var remMeData = JSON.parse(
-			decodeURIComponent(document.getCookie("rem-me"))
-		);
-	} catch (err) {
-		remMeData = void 0;
-	}
+	const remMeData = document.getCookie("rem-me");
+
 	if (remMeData) {
-		const request = new Request("/rem-me/load", {
+		const request = new Request(
+			"/remember-me/load?requestToken=" + decodeURIComponent(remMeData), {
 			method: "POST",
 			headers: new Headers({
 				"Content-Type": "application/json",
-			}),
-			body: JSON.stringify({
-				remMeData: remMeData,
 			}),
 		});
 		const response = await fetch(request);
@@ -27,10 +20,10 @@
 		} catch (err) {
 			body = void 0;
 		}
-		if (body?.parseData) {
-			const { parseData } = body;
-			email.val(parseData[0]);
-			password.val(parseData[1]);
+		if (body?.data) {
+			const { data } = body;
+			email.val(data[0]);
+			password.val(data[1]);
 			remMe.prop("checked", true);
 			submitBtn.removeDisableAttr();
 		}
