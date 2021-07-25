@@ -31,7 +31,7 @@ export const active = async (req, res, next) => {
 	if (req.isAuthenticated()) {
 		const now = Date.now();
 
-		if (now > req.session.createdAt + +ENV.SESSION_TIMEOUT) {
+		if (now > req.session.createdAt + 3000) {
 			await logOut(req, res, "/login?session_expired=true");
 			return next(new Error("Session expired"));
 		}
