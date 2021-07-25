@@ -8,8 +8,8 @@
   },
   "scripts": {
     "start": "node server",
-    "debug": "set DEBUG=express:* & node server.js",
-    "devStart": "nodemon --ignore ./public/** --exec node server.js",
+    "debug": "set DEBUG=express:* & nodemon",
+    "devStart": "nodemon",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

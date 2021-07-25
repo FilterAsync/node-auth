@@ -1,4 +1,3 @@
-import catchAsync from "express-async-handler";
 import * as dotenv from "dotenv";
 import { Unauthorized } from "../errors/index.mjs";
 import { logOut } from "../auth.mjs";
@@ -29,7 +28,7 @@ export function isUnauthenticated(req, res, next) {
 	res.status(301).redirect("/");
 }
 
-export const active = catchAsync(async (req, res, next) => {
+export const active = async (req, res, next) => {
 	if (req.isAuthenticated()) {
 		const now = Date.now();
 
@@ -40,4 +39,4 @@ export const active = catchAsync(async (req, res, next) => {
 		req.session.createdAt = now;
 	}
 	next();
-});
+};
