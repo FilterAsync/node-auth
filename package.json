@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node server",
-    "debug": "set DEBUG=express:* & nodemon",
+    "debug": "set DEBUG=express:* & node server",
     "devStart": "nodemon",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
