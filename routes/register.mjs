@@ -188,7 +188,7 @@ router.post(
 				"/register/email-verify-step?email=" +
 				user.email +
 				"&expires=" +
-				new URLSearchParams(verifyLink).get("expires"),
+				new URL(verifyLink).searchParams.get("expires"),
 		});
 	}
 );

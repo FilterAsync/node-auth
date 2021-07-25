@@ -3,7 +3,7 @@
 	alert = $("#resend-alert");
 	resendBtn.on("click", async function() {
 		resendBtn.addDisableAttr();
-		const params = new URLSearchParams(location.search);
+		const params = new URL(location.search).searchParams;
 		const request = new Request(
 			"/email/resend?email=" + params.get("email"), {
 				method: "POST",
