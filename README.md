@@ -1,6 +1,6 @@
 # Node.js Authentication Starter
 
-An authentication app built with JQuery, Bootstrap 5, Express, MongoDB and Redis.
+An authentication boilerplate built with JQuery, Bootstrap 5, Express, MongoDB, and Redis.
 
 ## Features
 - [x] Login, Logout, Register & session timeout (expiry)
@@ -14,9 +14,7 @@ An authentication app built with JQuery, Bootstrap 5, Express, MongoDB and Redis
 - Sign reCaptcha verification
 
 ## Inspiration
-This repository is inspired by [alex996's Node Auth](https://github.com/alex996/node-auth).
+This repository is inspired by [alex996's Node Authentication](https://github.com/alex996/node-auth).
 
-## Web
-This repository currently can be visit through [here](https://nas-backup.herokuapp.com/).
-
-<3
+## Conclusion
+I tried very hard to create this. There might be things I've missed, so if you have found any bugs or vulnerabilities, please report them to me; I appreciate your feedback.

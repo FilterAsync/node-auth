@@ -1,7 +1,6 @@
 import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
-import RedisRateLimitStore from "rate-limit-redis";
 import * as dotenv from "dotenv";
 
 const { env: ENV } = process;
@@ -27,5 +26,3 @@ const RedisSessionStore = connectRedis(session);
 export const client = new Redis(RedisHost, RedisOptions);
 
 export const SessionStore = new RedisSessionStore({ client: client });
-
-export const RateLimitStore = new RedisRateLimitStore({ client: client });

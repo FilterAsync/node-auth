@@ -6,6 +6,8 @@ import rateLimit from "express-rate-limit";
 import { RememberMe } from "../models/rem-me.mjs";
 import { User } from "../models/user.mjs";
 import ms from "ms";
+import RedisStore from "rate-limit-redis";
+import { client } from "../config/cache.mjs";
 
 const router = express.Router({
 	caseSensitive: true,
@@ -28,7 +30,11 @@ router.post(
 	"/login",
 	isUnauthenticated,
 	rateLimit({
-		windowMs: ms("2h"),
+		store: new RedisStore({
+			client: client,
+			expiry: ms("2h") / 1E3,
+		}),
+		headers: false,
 		max: 10,
 		handler: (_req, res) => {
 			res.status(429).render("login", {

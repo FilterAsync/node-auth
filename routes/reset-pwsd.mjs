@@ -7,6 +7,8 @@ import { sendMail } from "../mail.mjs";
 import { resetPassword } from "../auth.mjs";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import RedisStore from "rate-limit-redis";
+import { client } from "../config/cache.mjs";
 import ms from "ms";
 
 const { env: ENV } = process;
@@ -60,7 +62,11 @@ router.post(
 	"/reset-password",
 	isUnauthenticated,
 	rateLimit({
-		windowMs: ms("2m"),
+		store: new RedisStore({
+			client: client,
+			expiry: ms("2m") / 1E3,
+		}),
+		headers: false,
 		max: 1,
 		handler: (_req, res) => {
 			res.status(429).json({

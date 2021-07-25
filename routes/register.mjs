@@ -9,6 +9,8 @@ import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import assert from "assert";
 import ms from "ms";
+import RedisStore from "rate-limit-redis";
+import { client } from "../config/cache.mjs";
 
 const { env: ENV } = process;
 
@@ -110,7 +112,11 @@ router.post(
 	"/register",
 	isUnauthenticated,
 	rateLimit({
-		windowMs: ms("1d"),
+		store: new RedisStore({
+			client: client,
+			expiry: ms("1d"),
+		}),
+		headers: false,
 		max: 3,
 		handler: (_req, res) => {
 			res.status(429).json({
@@ -197,7 +203,11 @@ router.post(
 	"/email/resend",
 	isUnauthenticated,
 	rateLimit({
-		windowMs: ms("2m"),
+		store: new RedisStore({
+			client: client,
+			expiry: ms("2m") / 1E3,
+		}),
+		headers: false,
 		max: 1,
 		handler: (_req, res) => {
 			res.status(429).json({
