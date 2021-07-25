@@ -87,8 +87,9 @@ export const createApp = (store) => {
 		// Setting secure HTTP headers (used to block against attackers).
 
 		res.set({
-			/*	Note: if you're about to adding a script with an absolute path,
-					please put it into the "Content-Security-Policy" property.	*/
+			/*	Note: if you're about to add a script with an absolute path,
+					you will need to put it into the "Content-Security-Policy" to stop logging CSP errors.
+			*/
 			"Content-Security-Policy":
 				"default-src 'self'; style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ https://translate.googleapis.com/translate_static/css/translateelement.css; script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ https://www.gstatic.com/recaptcha/releases/; script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/; font-src 'self' 'unsafe-inline' https://use.fontawesome.com/; frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/; img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
 			"X-XSS-Protection": "1; mode=block",
