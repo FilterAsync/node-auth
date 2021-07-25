@@ -67,9 +67,8 @@ router.post(
 
 				const token = RememberMe.plaintextToken();
 				const remMe = new RememberMe({
-					userId: user._id,
 					token: token,
-					data: {
+					credentials: {
 						username: Buffer.from(eou, "binary").toString("hex"),
 						password: Buffer.from(password, "binary").toString("hex"),
 					},
@@ -101,21 +100,23 @@ router.post("/remember-me/load", isUnauthenticated, async (req, res) => {
 	}
 	const hashedToken = RememberMe.hashedToken(requestToken);
 
-	const remMeDoc = await RememberMe.findOne({
+	const remMe = await RememberMe.findOne({
 		token: hashedToken,
 	});
-	if (remMeDoc) {
-		if (+remMeDoc.expiredAt < Date.now()) {
-			await remMeDoc.delete();
+	if (remMe) {
+		if (+remMe.expiredAt < Date.now()) {
+			await remMe.delete();
 			res.clearCookie("rem-me").status(401).json({
 				message: "Remember me token is expired.",
 			});
 			return;
 		}
+		const { username, password } = remMe.credentials;
+
 		res.status(200).json({
 			data: [
-				Buffer.from(remMeDoc.data.username, "hex").toString("binary"),
-				Buffer.from(remMeDoc.data.password, "hex").toString("binary"),
+				Buffer.from(username, "hex").toString("binary"),
+				Buffer.from(password, "hex").toString("binary"),
 			],
 		});
 		return;
