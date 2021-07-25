@@ -1,6 +1,6 @@
 {
 	"watch": "*.*",
 	"ext": ".js, .mjs, .json",
-	"ignore": ["**/public/**", "**/node_modules/**"],
+	"ignore": ["**/public/**", "**/node_modules/**", "**/test.*"],
 	"exec": "node server"
 }
