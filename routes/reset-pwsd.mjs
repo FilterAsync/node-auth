@@ -1,6 +1,5 @@
 import express from "express";
 import { isUnauthenticated } from "../middleware/auth.mjs";
-import { validContentType } from "../middleware/valid-mime.mjs";
 import { User } from "../models/user.mjs";
 import { PasswordReset } from "../models/pwsd-reset.mjs";
 import { sendMail } from "../mail.mjs";
@@ -74,7 +73,6 @@ router.post(
 			});
 		},
 	}),
-	validContentType(),
 	async (req, res) => {
 		const { email } = req.body;
 		const user = await User.findOne({ visibleEmail: email });

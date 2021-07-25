@@ -2,7 +2,6 @@ import express from "express";
 import { User } from "../models/user.mjs";
 import crypto from "crypto";
 import { sendMail } from "../mail.mjs";
-import { validContentType } from "../middleware/valid-mime.mjs";
 import { isUnauthenticated } from "../middleware/auth.mjs";
 import { markAsVerified } from "../auth.mjs";
 import * as dotenv from "dotenv";
@@ -124,7 +123,6 @@ router.post(
 			});
 		},
 	}),
-	validContentType(),
 	async (req, res) => {
 		const { username, email, password } = req.body;
 		if (

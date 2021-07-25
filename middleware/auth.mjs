@@ -1,5 +1,4 @@
 import * as dotenv from "dotenv";
-import { Unauthorized } from "../errors/index.mjs";
 import { logOut } from "../auth.mjs";
 
 const { env: ENV } = process;
@@ -34,7 +33,7 @@ export const active = async (req, res, next) => {
 
 		if (now > req.session.createdAt + +ENV.SESSION_TIMEOUT) {
 			await logOut(req, res, "/login?session_expired=true");
-			return next(new Unauthorized("Session expired"));
+			return next(new Error("Session expired"));
 		}
 		req.session.createdAt = now;
 	}
