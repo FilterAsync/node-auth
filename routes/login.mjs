@@ -9,6 +9,7 @@ import passport from "passport";
 import rateLimit from "express-rate-limit";
 import { RememberMe } from "../models/rem-me.mjs";
 import { User } from "../models/user.mjs";
+import ms from "ms";
 
 const router = express.Router({
   caseSensitive: true,
@@ -31,7 +32,7 @@ router.post(
   "/login",
   isUnauthenticated,
 	rateLimit({
-			windowMs: 30 * 60 * 1E3,
+			windowMs: ms("2h"),
 			max: 10,
 			handler: (_req, res) => {
 				res.status(429).render("login", {
@@ -77,7 +78,7 @@ router.post(
 					"rem-me",
 					token,
 					{
-						maxAge: 24 * 60 * 60 * 7 * 1E3,
+						maxAge: ms("7d"),
 					},
 				);
 			}

@@ -7,6 +7,7 @@ import { sendMail } from "../mail.mjs";
 import { resetPassword } from "../auth.mjs";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
+import ms from "ms";
 
 const { env: ENV } = process;
 
@@ -66,9 +67,9 @@ router.post(
   "/reset-password",
   isUnauthenticated,
 	rateLimit({
-		windowMs: 2 * 60 * 1E3,
+		windowMs: ms("2m"),
 		max: 1,
-		handler: (req, res) => {
+		handler: (_req, res) => {
 			res.status(429).json({
 				message: "You only can resend again after 2 minutes.",
 			});

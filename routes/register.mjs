@@ -9,6 +9,7 @@ import { markAsVerified } from "../auth.mjs";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import assert from "assert";
+import ms from "ms";
 
 const { env: ENV } = process;
 
@@ -109,7 +110,7 @@ router.post(
   "/register",
   isUnauthenticated,
 	rateLimit({
-		windowMs: 24 * 60 * 60 * 1E3,
+		windowMs: ms("1d"),
 		max: 3,
 		handler: (_req, res) => {
 			res.status(429).json({
@@ -192,7 +193,7 @@ router.post(
 router.post("/email/resend",
 	isUnauthenticated,
 	rateLimit({
-		windowMs: 2 * 60 * 1E3,
+		windowMs: ms("2m"),
 		max: 1,
 		handler: (_req, res) => {
 			res.status(429).json({

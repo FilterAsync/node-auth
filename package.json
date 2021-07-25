@@ -28,7 +28,6 @@
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
-    "express-async-handler": "^1.1.4",
     "express-flash": "^0.0.2",
     "express-rate-limit": "^5.3.0",
     "express-session": "^1.17.0",
