@@ -23,7 +23,9 @@ import morgan from "morgan";
 import favicon from "serve-favicon";
 import { sessionOptions } from "./config/index.mjs";
 import flash from "express-flash";
+import serveStatic from "serve-static";
 import cookieParser from "cookie-parser";
+
 import * as dotenv from "dotenv";
 
 const { env: ENV } = process;
@@ -38,12 +40,28 @@ export const __dirname = path.dirname(__filename);
 export const createApp = (store) => {
 	const app = express();
 
+	app.disable("x-powered-by"); // prevent specifically-targeted attacks
+
 	app.set("views", [
 		path.join(__dirname, "views"),
 		path.join(__dirname, "views/errors"),
 	]);
 	app.set("view engine", "ejs");
-	app.use("/public", express.static(path.join(__dirname, "public")));
+	app.use(serveStatic(
+		path.join(__dirname, "public"), {
+			cacheControl: true,
+			setHeaders: function(res, path) {
+				const { mime } = serveStatic;
+
+				if (mime.lookup(path).includes("/html")) {
+					res.setHeader(
+						"Cache-Control",
+						"public, max-age=0"
+					);
+				}
+			}
+		})
+	);
 	app.use(favicon(path.join(__dirname, "public/img/favicon.ico")));
 	app.use(flash());
 	app.use(methodOverride("_method"));
@@ -84,11 +102,12 @@ export const createApp = (store) => {
 	app.use(compression());
 
 	app.use((_req, res, next) => {
-		// Setting secure HTTP headers (used to block against attackers).
+		// Setting secure HTTP headers.
 
 		res.set({
-			/*	Note: if you're about to add something about stylesheet/font/frame/script source
-					then you will need to enumerate it in the "Content-Security-Policy" property to stop logging CSP errors.
+			/*
+				Note: if you're about to add something about stylesheet/font/frame/url loaded script
+				then you will need to enumerate it in the "Content-Security-Policy" property to stop logging CSP errors.
 			*/
 			"Content-Security-Policy":
 			// -----------------------------------
