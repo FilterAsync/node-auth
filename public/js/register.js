@@ -4,7 +4,7 @@
 	email = $("#email"),
 	password = $("#password"),
 	alert = $("#register-alert"),
-	submitBtn = $("form > button[type='submit']"),
+	submitBtn = $("button[type='submit']"),
 	confirmPassword = $("#confirm-password");
 	[username, email, password, confirmPassword].forEach((field) => {
 		field.on("input", function() {
@@ -46,7 +46,7 @@
 				throw new Error("Credentials was taken.");
 			}
 			hint.bootstrapShow();
-			field.hideValidate();
+			field.hideInvalidValidate();
 			invalidFeedback.html(`
 				${name === "username"
 					? "Username only contains alphabetic characters (a-z, A-Z), numeric characters (0-9), include an underscore(_), and can be from 3 characters to 20 characters."
@@ -106,7 +106,7 @@
 							<span class="fas fa-exclamation-circle" aria-hidden="true"></span>
 							Error!
 						</strong>
-						<p>${message}</p>
+						<p class="mb-0">${message}</p>
 				`);
 				throw new Error(message);
 			}
