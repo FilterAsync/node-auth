@@ -7,7 +7,6 @@ import { RememberMe } from "../models/rem-me.mjs";
 import ms from "ms";
 import RedisStore from "rate-limit-redis";
 import { client } from "../config/cache.mjs";
-import assert from "assert"
 
 const router = express.Router({
 	caseSensitive: true,
@@ -32,7 +31,7 @@ router.post(
 	rateLimit({
 		store: new RedisStore({
 			client: client,
-			expiry: ms("2h") / 1E3,
+			expiry: ms("2h") / 1e3,
 		}),
 		headers: false,
 		max: 10,
