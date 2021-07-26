@@ -4,10 +4,10 @@ import { logOut } from "../auth.mjs";
 import passport from "passport";
 import rateLimit from "express-rate-limit";
 import { RememberMe } from "../models/rem-me.mjs";
-import { User } from "../models/user.mjs";
 import ms from "ms";
 import RedisStore from "rate-limit-redis";
 import { client } from "../config/cache.mjs";
+import assert from "assert"
 
 const router = express.Router({
 	caseSensitive: true,
@@ -53,17 +53,6 @@ router.post(
 		if (req.body["rem-me"] === "on") {
 			if (!req.cookies["rem-me"]) {
 				const { eou, password } = req.body;
-
-				const EoU = User.matchesEmail(eou) ? "email" : "username";
-				const user = await User.findOne(
-					EoU === "email"
-						? {
-								visibleEmail: eou,
-						  }
-						: {
-								username: eou,
-						  }
-				);
 
 				const token = RememberMe.plaintextToken();
 				const remMe = new RememberMe({

@@ -32,6 +32,7 @@ router.get(
 	isUnauthenticated,
 	async (req, res) => {
 		const { email, expires } = req.query;
+		console.log(email, expires);
 		let user;
 		if (
 			!+expires ||
@@ -41,12 +42,13 @@ router.get(
 			) ||
 			!(user = await User.findOne({
 				email: email,
-			}).select("username visibleEmail")) ||
+			}).select("username visibleEmail verifiedAt")) ||
 			user.verifiedAt
 		) {
 			res.status(404).render("404");
 			return;
 		}
+		console.log(user);
 		res.render("email-verify-step", { user: user });
 	}
 );

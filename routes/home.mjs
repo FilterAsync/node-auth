@@ -9,6 +9,7 @@ const router = Router({
 });
 
 router.get("/", isAuthenticated, async (req, res) => {
+	console.log(req.sessionID);
 	const user = await User.findById(req.session.passport.user).select(
 		"username visibleEmail avatarUrl"
 	);
