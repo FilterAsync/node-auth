@@ -20,7 +20,7 @@
 		} catch (err) {
 			body = void 0;
 		}
-		if (body?.data) {
+		if (body && body.data) {
 			const { data } = body;
 			email.val(data[0]);
 			password.val(data[1]);

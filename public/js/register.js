@@ -98,7 +98,7 @@
 				[username, email, password, submitBtn,].forEach((e) => {
 					e.prop("readonly", false).prop("disabled", false);
 				});
-				const message = body?.message || "Failed to register.";
+				const message = body && body.message;
 				submitBtn.removeDisableAttr();
 				alert.attr("class", "alert alert-danger")
 					.html(`

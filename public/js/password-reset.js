@@ -48,6 +48,7 @@
 			}
 
 			submitBtn.removeDisableAttr().text("Resend");
+			const message = body && body.message;
 			if (!response.ok) {
 					[newPassword, newPasswordConfirm,].forEach((e) => e.prop("readonly", false));
 					alert.attr("class", "alert alert-danger")
@@ -57,10 +58,10 @@
 								Error!
 							</strong>
 							<p class="mb-0">
-								${body?.message || "Failed to reset password."}
+								${message || "Failed to reset password."}
 							</p>
 					`);
-					throw new Error(body?.message || "Failed to reset password.");
+					throw new Error(message || "Failed to reset password.");
 			}
 			alert.attr("class", "alert alert-success")
 				.html(`
