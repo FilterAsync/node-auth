@@ -11,7 +11,10 @@ if (ENV.NODE_ENV !== "production") {
 const RememberMeSchema = new mongoose.Schema(
 	{
 		token: String,
-		credentials: Object,
+		credentials: {
+			type: Object,
+			required: true,
+		},
 		expiredAt: Date || Number,
 	},
 	{
