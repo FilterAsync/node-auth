@@ -47,19 +47,16 @@ export const createApp = (store) => {
 		path.join(__dirname, "views/errors"),
 	]);
 	app.set("view engine", "ejs");
-	app.use(serveStatic(
-		path.join(__dirname, "public"), {
+	app.use(
+		serveStatic(path.join(__dirname, "public"), {
 			cacheControl: true,
-			setHeaders: function(res, path) {
+			setHeaders: function (res, path) {
 				const { mime } = serveStatic;
 
 				if (mime.lookup(path).includes("/html")) {
-					res.setHeader(
-						"Cache-Control",
-						"public, max-age=0"
-					);
+					res.setHeader("Cache-Control", "public, max-age=0");
 				}
-			}
+			},
 		})
 	);
 	app.use(favicon(path.join(__dirname, "public/img/favicon.ico")));
@@ -110,18 +107,18 @@ export const createApp = (store) => {
 				then you will need to enumerate it in the "Content-Security-Policy" property to stop logging CSP errors.
 			*/
 			"Content-Security-Policy":
-			// -----------------------------------
-				"default-src 'self';"
+				// -----------------------------------
+				"default-src 'self';" +
 				/* for stylesheets */
-				+ "style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ https://translate.googleapis.com/translate_static/css/translateelement.css;"
+				"style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ https://translate.googleapis.com/translate_static/css/translateelement.css;" +
 				/* for inline scripts (e.g. event handler) & url loaded scripts */
-				+ "script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ https://www.gstatic.com/recaptcha/releases/;"
+				"script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ https://www.gstatic.com/recaptcha/releases/;" +
 				/* for url loaded script but not include inline scripts */
-				+ "script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/;"
+				"script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/;" +
 				/* for font loaded using css @font-face */
-				+ "font-src 'self' 'unsafe-inline' https://use.fontawesome.com/;"
-			 	/* for nested browsing contexts (i.e. <frame>, <iframe>) */
-				+ "frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/; img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
+				"font-src 'self' 'unsafe-inline' https://use.fontawesome.com/;" +
+				/* for nested browsing contexts (i.e. <frame>, <iframe>) */
+				"frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/; img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
 			// -----------------------------------
 			"X-XSS-Protection": "1; mode=block",
 			"X-Frame-Options": "DENY",
