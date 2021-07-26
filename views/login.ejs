@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../public/styles/normalize.css" type="text/css" />
-    <link rel="stylesheet" href="../public/styles/style.css" type="text/css" />
+    <link rel="stylesheet" href="../styles/normalize.css" type="text/css" />
+    <link rel="stylesheet" href="../styles/style.css" type="text/css" />
     <%- include ("./includes/resources.ejs") %>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -54,7 +54,7 @@
                         <div class="alert alert-danger">
                             <strong class="semi-bold">
                                 <span class="fas fa-exclamation-circle" aria-hidden="true"></span>
-                                Your session has expired. Please log in.
+                                Error!
                             </strong>
                             <p class="mb-0">
                                 Your session has expired. Please log in.
@@ -107,7 +107,7 @@
         </div>
     </div>
     <% if (!isExceeded) { %>
-        <script type="text/javascript" src="../public/js/login.js" defer="defer"></script>
+        <script type="text/javascript" src="../js/login.js" defer="defer"></script>
     <% } %>
     <%- include ("./includes/bottom-navbar.ejs") %>
 </body>
