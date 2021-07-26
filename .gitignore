@@ -5,5 +5,12 @@
 *.rest
 *.http
 test.*
+.DS_Store
+._*
+*.o
+*.so
+*.dll
+*.exe
+build
 npm-debug.log
 yarn-error.log
