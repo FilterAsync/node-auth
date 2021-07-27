@@ -1,8 +1,8 @@
 /node_modules
 /.vscode
-/.env
-dist
-bin
-build
-*.log
-test.*
+**/.env
+**/dist
+**/bin
+**/build
+**/*.log
+**/test.*

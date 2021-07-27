@@ -8,14 +8,15 @@
 		"node": "15.x"
 	},
 	"scripts": {
-		"start": "node server",
-		"debug": "set DEBUG=express:* & node server",
+		"start": "ts-node src/server",
+		"debug": "set DEBUG=express:* & ts-node src/server",
 		"devStart": "set NODE_ENV=development & nodemon",
-		"lint": "eslint .",
-		"lint:fix": "eslint . --fix",
+		"lint": "eslint ./src",
+		"lint:fix": "eslint ./src --fix",
 		"babel:version": "babel --version",
-		"babel:run": "babel public/js -d build",
-		"production-mode": "set NODE_ENV=production & node server"
+		"babel:run": "babel src/public/js -d build",
+		"production-mode": "set NODE_ENV=production & nodemon",
+		"compile": "tsc"
 	},
 	"keywords": [],
 	"author": "",
