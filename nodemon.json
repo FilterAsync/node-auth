@@ -1,6 +1,6 @@
 {
 	"watch": "*.*",
-	"ext": ".js, .mjs, .json",
+	"ext": ".ts, .json",
 	"ignore": ["**/public/**", "**/node_modules/**", "**/test.*"],
-	"exec": "node server"
+	"exec": "ts-node server"
 }

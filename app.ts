@@ -1,30 +1,21 @@
-import express from "express";
+import express, { ErrorRequestHandler } from "express";
 import compression from "compression";
 import cors from "cors";
 import session from "express-session";
 import helmet from "helmet";
 import methodOverride from "method-override";
 import passport from "passport";
-import {
-	serializeUser,
-	deserializeUser,
-	localStrategy,
-} from "./config/index.mjs";
-import { login, register, home, resetPassword } from "./routes/index.mjs";
-import {
-	active,
-	notFoundError,
-	decodeUriError,
-	internalServerError,
-} from "./middleware/index.mjs";
+import { serializeUser, deserializeUser, localStrategy } from "./config";
+import { login, register, home, resetPassword } from "./routes";
+import { active, notFoundError, decodeUriError } from "./middleware";
 import path from "path";
-import { fileURLToPath } from "url";
 import morgan from "morgan";
 import favicon from "serve-favicon";
-import { sessionOptions } from "./config/index.mjs";
+import { sessionOptions } from "./config";
 import flash from "express-flash";
 import serveStatic from "serve-static";
 import cookieParser from "cookie-parser";
+import { SessionStore } from "./config/cache";
 
 import * as dotenv from "dotenv";
 
@@ -34,11 +25,10 @@ if (ENV.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
-export const __filename = fileURLToPath(import.meta.url);
-export const __dirname = path.dirname(__filename);
-
-export const createApp = (store) => {
+export const createApp = async (errorHandler: ErrorRequestHandler) => {
 	const app = express();
+
+	app.engine("html", (await import("ejs")).renderFile);
 
 	app.disable("x-powered-by"); // prevent specifically-targeted attacks
 
@@ -63,7 +53,12 @@ export const createApp = (store) => {
 	app.use(flash());
 	app.use(methodOverride("_method"));
 	app.use(helmet());
-	app.use(session({ ...sessionOptions, store }));
+	app.use(
+		session({
+			...sessionOptions,
+			store: SessionStore,
+		})
+	);
 	app.use(cookieParser(ENV.COOKIE_SECRET));
 	app.use(passport.initialize());
 	app.use(passport.session());
@@ -109,16 +104,23 @@ export const createApp = (store) => {
 			"Content-Security-Policy":
 				// -----------------------------------
 				"default-src 'self';" +
-				/* for stylesheets */
-				"style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ https://translate.googleapis.com/translate_static/css/translateelement.css;" +
-				/* for inline scripts (e.g. event handler) & url loaded scripts */
-				"script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ https://www.gstatic.com/recaptcha/releases/;" +
-				/* for url loaded script but not include inline scripts */
-				"script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/;" +
-				/* for font loaded using css @font-face */
+				// for stylesheets
+				"style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ " +
+				"https://translate.googleapis.com/translate_static/css/translateelement.css;" +
+				// for inline scripts (e.g. event handler) & url loaded scripts
+				"script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ " +
+				"https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ " +
+				"https://www.gstatic.com/recaptcha/releases/; " +
+				// for url loaded script but not include inline scripts
+				"script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ " +
+				"https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ " +
+				"https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/;" +
+				// for font loaded using css @font-face
 				"font-src 'self' 'unsafe-inline' https://use.fontawesome.com/;" +
-				/* for nested browsing contexts (i.e. <frame>, <iframe>) */
-				"frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/; img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
+				// for nested browsing contexts (i.e. <frame>, <iframe>)
+				"frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/;" +
+				// for valid sources of images and favicons
+				"img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
 			// -----------------------------------
 			"X-XSS-Protection": "1; mode=block",
 			"X-Frame-Options": "DENY",
@@ -129,19 +131,13 @@ export const createApp = (store) => {
 
 	app.use(active);
 
-	app.use(home);
-
-	app.use(login);
-
-	app.use(resetPassword);
-
-	app.use(register);
+	app.use(home, login, resetPassword, register);
 
 	app.use(decodeUriError);
 
 	app.use(notFoundError);
 
-	app.use(internalServerError);
+	app.use(errorHandler);
 
 	return app;
 };

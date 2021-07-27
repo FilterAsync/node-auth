@@ -34,6 +34,7 @@
 			const response = await fetch(request);
 			const body = await response.json();
 			submitBtn.removeDisableAttr();
+			const message = body.message && body.message;
 			if (!response.ok) {
 				alert.attr("class", "alert alert-danger")
 					.html(`
@@ -42,12 +43,12 @@
 						Error!
 					</strong>
 					<p class="mb-0">
-						Sorry we cannot send an email to <strong class="semi-bold">
+						${message || `Sorry we cannot send an email to <strong class="semi-bold">
 							${email.val().length > 30 ? email.val().substring(0,30).concat("...") : email.val().concat(".")}
-						</strong>
+						</strong>`}
 					</p>
 				`);
-				throw new Error(body.message || "Failed to reset password.");
+				throw new Error(message || "Failed to reset password.");
 			}
 			alert.attr("class", "alert alert-success")
 				.html(`

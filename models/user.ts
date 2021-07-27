@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 import { hash, compare } from "bcrypt";
 import * as dotenv from "dotenv";
+import { IUser, UserModel } from "../interfaces/db";
 
 const { env: ENV } = process;
 
@@ -9,7 +10,7 @@ if (ENV.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
-const UserSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema<IUser>(
 	{
 		username: {
 			type: String,
@@ -70,7 +71,7 @@ UserSchema.statics.matchesEmail = (email) =>
 
 UserSchema.methods.createVerificationUrl = function () {
 	const token = crypto.createHash("sha1").update(this.email).digest("hex");
-	const expires = Date.now() + +ENV.EMAIL_VERIFICATION_TIMEOUT;
+	const expires = Date.now() + +(ENV.EMAIL_VERIFICATION_TIMEOUT as string);
 
 	const url = `${ENV.APP_ORIGIN}/email/verify?id=${this._id}&token=${token}&expires=${expires}`;
 	const signature = User.signVerificationUrl(url);
@@ -79,7 +80,10 @@ UserSchema.methods.createVerificationUrl = function () {
 };
 
 UserSchema.statics.signVerificationUrl = (url) =>
-	crypto.createHmac("sha256", ENV.APP_SECRET).update(url).digest("hex");
+	crypto
+		.createHmac("sha256", ENV.APP_SECRET as string)
+		.update(url)
+		.digest("hex");
 
 UserSchema.statics.hasValidVerificationUrl = (path, query) => {
 	const url = `${ENV.APP_ORIGIN}${path}`;
@@ -94,14 +98,14 @@ UserSchema.statics.hasValidVerificationUrl = (path, query) => {
 			Buffer.from(query.signature)
 		) &&
 		+expires > Date.now() &&
-		+expires - Date.now() <= ENV.EMAIL_VERIFICATION_TIMEOUT
+		+expires - Date.now() <= +(ENV.EMAIL_VERIFICATION_TIMEOUT as string)
 	);
 };
 
 UserSchema.pre("save", async function () {
 	if (this.isModified("password")) {
-		this.password = await hash(this.password, +ENV.BCRYPT_SALT);
+		this.password = await hash(this.password, +(ENV.BCRYPT_SALT as string));
 	}
 });
 
-export const User = mongoose.model("User", UserSchema);
+export const User = mongoose.model<IUser, UserModel>("User", UserSchema);

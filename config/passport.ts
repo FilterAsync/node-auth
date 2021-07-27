@@ -1,14 +1,15 @@
 import { Strategy as LocalStrategy } from "passport-local";
 import crypto from "crypto";
-import { User } from "../models/user.mjs";
-import * as bcrypt from "bcrypt";
+import { User } from "../models/user";
+import { IUser } from "../interfaces/db";
+import { NativeError } from "mongoose";
 
-export const serializeUser = (user, done) => {
+export const serializeUser = (user: any, done: any) => {
 	done(null, user._id);
 };
 
-export const deserializeUser = (_id, done) => {
-	User.findById(_id, (err, user) => {
+export const deserializeUser = (_id: string, done: any) => {
+	User.findById(_id, (err: NativeError, user: IUser) => {
 		done(err, user);
 	});
 };
@@ -29,18 +30,12 @@ export const localStrategy = new LocalStrategy(
 				: {
 						username: eou,
 				  },
-			async (err, user) => {
+			async (err: NativeError, user: IUser) => {
 				if (err) {
 					return done(err);
 				}
-				if (
-					!user ||
-					!(await bcrypt.compare(password, user.password)) ||
-					!user.verifiedAt
-				) {
-					return done(null, false, {
-						messages: "Invalid credentials",
-					});
+				if (!user || !user.matchesPassword(password) || !user.verifiedAt) {
+					return done(null, false);
 				}
 				return done(null, user);
 			}

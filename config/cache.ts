@@ -11,11 +11,13 @@ if (ENV.NODE_ENV !== "production") {
 
 const Prod = ENV.NODE_ENV === "production";
 
-const RedisPort = Prod ? +ENV.REDIS_PORT : +ENV.REDIS_PORT_LOCAL;
+const RedisPort = Prod
+	? +(ENV.REDIS_PORT as string)
+	: +(ENV.REDIS_PORT_LOCAL as string);
 const RedisHost = Prod ? ENV.REDIS_HOST : ENV.REDIS_HOST_LOCAL;
 const RedisPassword = Prod ? ENV.REDIS_PASSWORD : ENV.REDIS_PASSWORD_LOCAL;
 
-const RedisOptions = {
+const RedisOptions: Redis.RedisOptions = {
 	port: RedisPort,
 	host: RedisHost,
 	password: RedisPassword,

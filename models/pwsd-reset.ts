@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 import * as dotenv from "dotenv";
+import { IPasswordReset, PasswordResetModel } from "../interfaces/db";
 
 const { env: ENV } = process;
 
@@ -8,7 +9,7 @@ if (ENV.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
-const PasswordResetSchema = new mongoose.Schema(
+const PasswordResetSchema = new mongoose.Schema<IPasswordReset>(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -16,7 +17,7 @@ const PasswordResetSchema = new mongoose.Schema(
 			ref: "User",
 		},
 		token: String,
-		expiredAt: Date || Number,
+		expiresAt: Date || Number,
 	},
 	{
 		timestamps: {
@@ -30,9 +31,9 @@ PasswordResetSchema.pre("save", function () {
 	if (this.isModified("token")) {
 		this.token = PasswordReset.hashedToken(this.token);
 	}
-	if (!this.expiredAt) {
-		this.expiredAt = new Date(
-			new Date().getTime() + +ENV.PASSWORD_RESET_TIMEOUT
+	if (!this.expiresAt) {
+		this.expiresAt = new Date(
+			new Date().getTime() + +(ENV.PASSWORD_RESET_TIMEOUT as string)
 		);
 	}
 });
@@ -46,19 +47,24 @@ PasswordResetSchema.methods.isValidUrl = function (ptt) {
 
 	return (
 		crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(this.token)) &&
-		+this.expiredAt > Date.now() &&
-		+this.expiredAt - Date.now() <= ENV.PASSWORD_RESET_TIMEOUT
+		+this.expiresAt > Date.now() &&
+		+this.expiresAt - Date.now() <= +(ENV.PASSWORD_RESET_TIMEOUT as string)
 	);
 };
 
 PasswordResetSchema.statics.plaintextToken = function () {
-	return crypto.randomBytes(+ENV.PASSWORD_RANDOM_BYTES).toString("hex");
+	return crypto
+		.randomBytes(+(ENV.PASSWORD_RANDOM_BYTES as string))
+		.toString("hex");
 };
 
 PasswordResetSchema.statics.hashedToken = (ptt) =>
-	crypto.createHmac("sha256", ENV.APP_SECRET).update(ptt).digest("hex");
+	crypto
+		.createHmac("sha256", ENV.APP_SECRET as string)
+		.update(ptt)
+		.digest("hex");
 
-export const PasswordReset = mongoose.model(
+export const PasswordReset = mongoose.model<IPasswordReset, PasswordResetModel>(
 	"PasswordReset",
 	PasswordResetSchema
 );

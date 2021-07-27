@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"target": "ESNEXT",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"outDir": "dist",
+		"noImplicitThis": true,
+		"noImplicitAny": true,
+		"removeComments": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"alwaysStrict": true,
+		"noUnusedLocals": true
+	},
+	"include": [
+		"models/*",
+		"interfaces/*",
+		"routes/*",
+		"config/*",
+		"middleware/*",
+		"utils/*",
+		"*.ts"
+	],
+	"exclude": ["node_modules/**", "views/**"]
+}

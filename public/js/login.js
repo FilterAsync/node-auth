@@ -8,7 +8,7 @@
 
 	if (remMeData) {
 		const request = new Request(
-			"/remember-me/load?requestToken=" + decodeURIComponent(remMeData), {
+			"/remember-me/load?requestToken=" + remMeData, {
 			method: "POST",
 			headers: new Headers({
 				"Content-Type": "application/json",

@@ -4,42 +4,14 @@
 		"es6": true
 	},
 	"extends": [
-		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"prettier",
 		"plugin:prettier/recommended"
 	],
+	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": 12,
-		"sourceType": "module",
-		"allowImportExportEverywhere": true
+		"project": "./tsconfig.json"
 	},
-	"plugins": [
-		"eslint-plugin-prettier",
-		"eslint-plugin-import",
-		"promise"
-	],
-	"rules": {
-		"prettier/prettier": [
-			"error",
-			{
-				"endOfLine": "auto"
-			}
-		],
-		"eqeqeq": [
-			"warn",
-			"always"
-		],
-		"no-else-return": "error",
-		"no-eval": "error",
-		"require-await": "warn",
-		"no-useless-return": "error",
-		"strict": [
-			"error",
-			"global"
-		],
-		"no-useless-catch": "error",
-		"semi": [
-			"error",
-			"always"
-		]
-	}
+	"plugins": ["eslint-plugin-prettier", "eslint-plugin-import", "promise"]
 }

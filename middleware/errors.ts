@@ -1,8 +1,10 @@
-export const notFoundError = (_req, res) => {
+import { RequestHandler, ErrorRequestHandler } from "express";
+
+export const notFoundError: RequestHandler = (_req, res, _next) => {
 	res.status(404).render("404");
 };
 
-export const decodeUriError = (req, res, next) => {
+export const decodeUriError: RequestHandler = (req, res, next) => {
 	try {
 		decodeURIComponent(req.path);
 	} catch (e) {
@@ -12,7 +14,12 @@ export const decodeUriError = (req, res, next) => {
 	next();
 };
 
-export const internalServerError = (err, _req, res, next) => {
+export const internalServerError: ErrorRequestHandler = (
+	err,
+	_req,
+	res,
+	next
+) => {
 	if (!err.status) {
 		console.error(err.stack);
 	}
