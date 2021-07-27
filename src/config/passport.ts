@@ -1,7 +1,7 @@
 import { Strategy as LocalStrategy } from "passport-local";
 import crypto from "crypto";
 import { User } from "../models/user";
-import { IUser } from "../interfaces/db";
+import { UserDocument } from "../interfaces";
 import { NativeError } from "mongoose";
 
 export const serializeUser = (user: any, done: any) => {
@@ -9,7 +9,7 @@ export const serializeUser = (user: any, done: any) => {
 };
 
 export const deserializeUser = (_id: string, done: any) => {
-	User.findById(_id, (err: NativeError, user: IUser) => {
+	User.findById(_id, (err: NativeError, user: UserDocument) => {
 		done(err, user);
 	});
 };
@@ -30,7 +30,7 @@ export const localStrategy = new LocalStrategy(
 				: {
 						username: eou,
 				  },
-			async (err: NativeError, user: IUser) => {
+			async (err: NativeError, user: UserDocument) => {
 				if (err) {
 					return done(err);
 				}

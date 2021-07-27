@@ -16,6 +16,7 @@ import flash from "express-flash";
 import serveStatic from "serve-static";
 import cookieParser from "cookie-parser";
 import { SessionStore } from "./config/cache";
+import { verify } from "./routes";
 
 import * as dotenv from "dotenv";
 
@@ -49,6 +50,7 @@ export const createApp = async (errorHandler: ErrorRequestHandler) => {
 			},
 		})
 	);
+
 	app.use(favicon(path.join(__dirname, "public/img/favicon.ico")));
 	app.use(flash());
 	app.use(methodOverride("_method"));
@@ -62,6 +64,7 @@ export const createApp = async (errorHandler: ErrorRequestHandler) => {
 	app.use(cookieParser(ENV.COOKIE_SECRET));
 	app.use(passport.initialize());
 	app.use(passport.session());
+	app.use(active);
 
 	passport.serializeUser(serializeUser);
 	passport.deserializeUser(deserializeUser);
@@ -72,10 +75,7 @@ export const createApp = async (errorHandler: ErrorRequestHandler) => {
 			origin: "*",
 			methods: ["GET", "POST", "PUT", "DELETE"], // enumerate more if you want to...
 			preflightContinue: false,
-		})
-	);
-
-	app.use(
+		}),
 		morgan(function (tokens, req, res) {
 			const contentLength = tokens.res(req, res, "Content-Length") || "None";
 
@@ -88,56 +88,52 @@ export const createApp = async (errorHandler: ErrorRequestHandler) => {
 				tokens["response-time"](req, res),
 				"ms.",
 			].join(" ");
-		})
-	);
+		}),
+		compression(),
+		(_, res, next) => {
+			// Setting secure HTTP headers.
 
-	app.use(compression());
-
-	app.use((_req, res, next) => {
-		// Setting secure HTTP headers.
-
-		res.set({
-			/*
+			res.set({
+				/*
 				Note: if you're about to add something about stylesheet/font/frame/url loaded script
 				then you will need to enumerate it in the "Content-Security-Policy" property to stop logging CSP errors.
 			*/
-			"Content-Security-Policy":
+				"Content-Security-Policy":
+					// -----------------------------------
+					"default-src 'self';" +
+					// for stylesheets
+					"style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ " +
+					"https://translate.googleapis.com/translate_static/css/translateelement.css;" +
+					// for inline scripts (e.g. event handler) & url loaded scripts
+					"script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ " +
+					"https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ " +
+					"https://www.gstatic.com/recaptcha/releases/; " +
+					// for url loaded script but not include inline scripts
+					"script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ " +
+					"https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ " +
+					"https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/;" +
+					// for font loaded using css @font-face
+					"font-src 'self' 'unsafe-inline' https://use.fontawesome.com/;" +
+					// for nested browsing contexts (i.e. <frame>, <iframe>)
+					"frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/;" +
+					// for valid sources of images and favicons
+					"img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
 				// -----------------------------------
-				"default-src 'self';" +
-				// for stylesheets
-				"style-src 'self' 'unsafe-inline' https://use.fontawesome.com/ https://cdn.jsdelivr.net/npm/ " +
-				"https://translate.googleapis.com/translate_static/css/translateelement.css;" +
-				// for inline scripts (e.g. event handler) & url loaded scripts
-				"script-src 'self' 'unsafe-inline' https://code.jquery.com/ https://www.googletagmanager.com/ " +
-				"https://cdn.jsdelivr.net/npm/ https://cdnjs.cloudflare.com/ajax/libs/fetch/ " +
-				"https://www.gstatic.com/recaptcha/releases/; " +
-				// for url loaded script but not include inline scripts
-				"script-src-elem 'self' 'unsafe-inline' https://code.jquery.com/ https://translate.googleapis.com/ " +
-				"https://www.gstatic.com/recaptcha/releases/ https://cdn.jsdelivr.net/npm/ " +
-				"https://www.google.com/recaptcha/api.js https://translate.google.com/ https://www.googletagmanager.com/;" +
-				// for font loaded using css @font-face
-				"font-src 'self' 'unsafe-inline' https://use.fontawesome.com/;" +
-				// for nested browsing contexts (i.e. <frame>, <iframe>)
-				"frame-src 'self' 'unsafe-inline' https://www.google.com/ https://www.googletagmanager.com/;" +
-				// for valid sources of images and favicons
-				"img-src 'self' 'unsafe-inline' data: 'unsafe-eval' 'unsafe-inline' https://gravatar.com/avatar/;",
-			// -----------------------------------
-			"X-XSS-Protection": "1; mode=block",
-			"X-Frame-Options": "DENY",
-			"X-Content-Type-Options": "nosniff",
-		});
-		next();
-	});
+				"X-XSS-Protection": "1; mode=block",
+				"X-Frame-Options": "DENY",
+				"X-Content-Type-Options": "nosniff",
+			});
+			next();
+		}
+	);
 
-	app.use(active);
+	// routes
 
-	app.use(home, login, resetPassword, register);
+	app.use(home, login, resetPassword, register, verify);
 
-	app.use(decodeUriError);
+	// errors
 
-	app.use(notFoundError);
-
-	app.use(errorHandler);
+	app.use(decodeUriError, notFoundError, errorHandler);
 
 	return app;
 };

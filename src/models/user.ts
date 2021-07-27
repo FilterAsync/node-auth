@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 import { hash, compare } from "bcrypt";
 import * as dotenv from "dotenv";
-import { IUser, UserModel } from "../interfaces/db";
+import { UserDocument, UserModel } from "../interfaces";
+import { verificationQuery } from "../interfaces/others";
 
 const { env: ENV } = process;
 
@@ -10,7 +11,7 @@ if (ENV.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
-const UserSchema = new mongoose.Schema<IUser>(
+const UserSchema = new mongoose.Schema<UserDocument>(
 	{
 		username: {
 			type: String,
@@ -85,7 +86,10 @@ UserSchema.statics.signVerificationUrl = (url) =>
 		.update(url)
 		.digest("hex");
 
-UserSchema.statics.hasValidVerificationUrl = (path, query) => {
+UserSchema.statics.hasValidVerificationUrl = (
+	path: string,
+	query: verificationQuery
+) => {
 	const url = `${ENV.APP_ORIGIN}${path}`;
 	const original = url.slice(0, url.lastIndexOf("&"));
 	const signature = User.signVerificationUrl(original);
@@ -108,4 +112,4 @@ UserSchema.pre("save", async function () {
 	}
 });
 
-export const User = mongoose.model<IUser, UserModel>("User", UserSchema);
+export const User = mongoose.model<UserDocument, UserModel>("User", UserSchema);

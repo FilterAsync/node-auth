@@ -5,7 +5,8 @@
 	"description": "",
 	"main": "server.ts",
 	"engines": {
-		"node": "15.x"
+		"node": "16.x",
+		"vscode": "^1.22.0"
 	},
 	"scripts": {
 		"start": "ts-node src/server",
@@ -15,13 +16,13 @@
 		"lint:fix": "eslint ./src --fix",
 		"babel:version": "babel --version",
 		"babel:run": "babel src/public/js -d build",
-		"production-mode": "set NODE_ENV=production & nodemon",
-		"compile": "tsc"
+		"production-mode": "set NODE_ENV=production & nodemon"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
+		"@types/lodash": "^4.14.171",
 		"bcrypt": "^5.0.1",
 		"compression": "^1.7.4",
 		"connect-redis": "^6.0.0",

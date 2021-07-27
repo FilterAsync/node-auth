@@ -31,7 +31,7 @@ router
 			}),
 			headers: false,
 			max: 10,
-			handler: (_req, res) => {
+			handler: (_, res) => {
 				res.status(429).render("login", {
 					tooManyRequests: true,
 					error: false,
@@ -45,11 +45,17 @@ router
 			failureFlash: "Invalid credentials",
 		}),
 		async (req, res) => {
-			if (req.body["rem-me"] === "on") {
-				if (!req.cookies["rem-me"]) {
-					const { eou, password } = req.body;
+			const isRemMeChecked = req.body["rem-me"] === "on";
 
-					const token = RememberMe.plaintextToken();
+			if (isRemMeChecked && !req.cookies["rem-me"]) {
+				const { eou, password } = req.body;
+
+				const token = RememberMe.plaintextToken();
+				const duplicate = await RememberMe.exists({
+					token: RememberMe.hashedToken(token),
+				});
+
+				if (!duplicate) {
 					const remMe = new RememberMe({
 						token: token,
 						credentials: {
@@ -58,12 +64,12 @@ router
 						},
 					});
 					await remMe.save();
-
-					res.cookie("rem-me", token, {
-						maxAge: ms("7d"),
-					});
 				}
-			} else {
+
+				res.cookie("rem-me", token, {
+					maxAge: ms("7d"),
+				});
+			} else if (!isRemMeChecked) {
 				res.clearCookie("rem-me");
 			}
 			const { redirectUri } = req.query;

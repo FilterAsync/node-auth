@@ -1,23 +1,22 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "CommonJS",
 		"esModuleInterop": true,
 		"strict": true,
-		"strictNullChecks": true,
-		"target": "ESNEXT",
-		"moduleResolution": "node",
+		"target": "ESNext",
+		"moduleResolution": "Node",
 		"sourceMap": true,
 		"outDir": "./dist",
-		"rootDir": "src",
-		"noImplicitThis": true,
-		"noImplicitAny": true,
+		"rootDir": "./src",
+		"allowUnreachableCode": false,
 		"removeComments": true,
 		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"alwaysStrict": true,
-		"noUnusedLocals": true
+		"noUnusedLocals": true,
+		"allowUnusedLabels": false,
+		"pretty": true
 	},
 	"include": ["src/**/*.ts", "*.ts"],
-	"exclude": ["node_modules/**", "views/**"]
+	"exclude": ["node_modules/**", "views/**", "tests/**"]
 }

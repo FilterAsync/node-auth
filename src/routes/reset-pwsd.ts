@@ -33,7 +33,7 @@ router
 			}),
 			headers: false,
 			max: 2,
-			handler: (_req, res) => {
+			handler: (_, res) => {
 				res.status(429).json({
 					message: "You only can resend again after 1 minute.",
 				});

@@ -1,20 +1,19 @@
 import { Document, Types, Model } from "mongoose";
+import { verificationQuery } from "./others";
 
-export interface IUser extends Document {
-	_id: Types.ObjectId;
+export interface UserDocument extends Document {
 	username: string;
 	email: string;
 	visibleEmail: string;
 	password: string;
-	verifiedAt: number | Date | void;
+	verifiedAt?: number | Date | null;
 	avatarUrl: string;
 	createVerificationUrl: () => string;
-	gravatar: (size: number) => Promise<string>;
-	matchesPassword: (password: string) => Promise<string>;
+	gravatar: (size: number) => Promise<any>;
+	matchesPassword: (password: string) => Promise<boolean>;
 }
 
-export interface IRememberMe extends Document {
-	_id: Types.ObjectId;
+export interface RememberMeDocument extends Document {
 	credentials: {
 		username: string;
 		password: string;
@@ -23,8 +22,7 @@ export interface IRememberMe extends Document {
 	expiresAt: Date;
 }
 
-export interface IPasswordReset extends Document {
-	_id: Types.ObjectId;
+export interface PasswordResetDocument extends Document {
 	userId: Types.ObjectId;
 	token: string;
 	expiresAt: Date;
@@ -32,19 +30,19 @@ export interface IPasswordReset extends Document {
 	createResetPasswordUrl: (ptt: string) => string;
 }
 
-export interface RememberMeModel extends Model<IRememberMe> {
-	hashedToken: (token: string) => string;
-	plaintextToken: () => string;
-}
-
-export interface PasswordResetModel extends Model<IPasswordReset> {
-	plaintextToken: () => string;
-	hashedToken: (token: string) => string;
-}
-
-export interface UserModel extends Model<IUser> {
+export interface UserModel extends Model<UserDocument> {
 	matchesEmail: (email: string) => string;
 	matchesUsername: (username: string) => boolean;
 	signVerificationUrl: (url: string) => string;
-	hasValidVerificationUrl: (url: string, query: any) => string;
+	hasValidVerificationUrl: (url: string, query: verificationQuery) => string;
+}
+
+export interface RememberMeModel extends Model<RememberMeDocument> {
+	hashedToken: (token: string) => string;
+	plaintextToken: () => string;
+}
+
+export interface PasswordResetModel extends Model<PasswordResetDocument> {
+	plaintextToken: () => string;
+	hashedToken: (token: string) => string;
 }

@@ -1,6 +1,6 @@
-import { IUser } from "../interfaces/db";
+import { UserDocument } from "../interfaces";
 
-export const message = (user: IUser, verifyLink: string) => {
+export const message = (user: UserDocument, verifyLink: string) => {
 	return `
     <h4>Hello ${user.username},</h4>
     <p>

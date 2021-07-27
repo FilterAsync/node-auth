@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { IUser } from "./interfaces/db";
+import { UserDocument } from "./interfaces";
 import * as dotenv from "dotenv";
 
 const { env: ENV } = process;
@@ -24,12 +24,12 @@ export const logOut: RequestHandler = (req, res, next): Promise<any> => {
 	});
 };
 
-export const markAsVerified = async (user: IUser) => {
+export const markAsVerified = async (user: UserDocument) => {
 	user.verifiedAt = Date.now();
 	await user.save();
 };
 
-export const resetPassword = async (user: IUser, password: string) => {
+export const resetPassword = async (user: UserDocument, password: string) => {
 	user.password = password;
 	await user.save();
 };

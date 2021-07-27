@@ -23,8 +23,8 @@ const RedisOptions: Redis.RedisOptions = {
 	password: RedisPassword,
 };
 
-const RedisSessionStore = connectRedis(session);
+const RedisStore = connectRedis(session);
 
 export const client = new Redis(RedisHost, RedisOptions);
 
-export const SessionStore = new RedisSessionStore({ client: client });
+export const SessionStore = new RedisStore({ client: client });
