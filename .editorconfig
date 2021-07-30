@@ -1,3 +1,7 @@
+[*.{html,xml,xaml,htm}]
+ident_style = space
+ident_size = 4
+trim_trailing_whitespace = true
 [*.{mjs,js,json,ts,babelrc}]
 indent_style = tab
 indent_size = 2
