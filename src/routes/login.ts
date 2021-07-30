@@ -5,6 +5,7 @@ import passport from "passport";
 import rateLimit from "express-rate-limit";
 import { RememberMe } from "../models/rem-me";
 import ms from "ms";
+import { s } from "../utils";
 import RedisStore from "rate-limit-redis";
 import { client } from "../config/cache";
 
@@ -15,7 +16,7 @@ router.use(express.urlencoded({ extended: false }));
 router
 	.route("/login")
 	.get(isUnauthenticated, (req, res) => {
-		res.render("login", {
+		res.status(200).render("login", {
 			error: req.query.error,
 			sessionExpired: req.query.session_expired,
 			redirectUri: req.query.redirectUri,
@@ -27,7 +28,7 @@ router
 		rateLimit({
 			store: new RedisStore({
 				client: client,
-				expiry: ms("2h") / 1e3,
+				expiry: s("2h"),
 			}),
 			headers: false,
 			max: 10,
@@ -90,6 +91,8 @@ router.post("/remember-me/load", isUnauthenticated, async (req, res) => {
 	}
 	const hashedToken = RememberMe.hashedToken(requestToken as string);
 
+	console.log(hashedToken);
+
 	const remMe = await RememberMe.findOne({
 		token: hashedToken,
 	});
@@ -113,7 +116,7 @@ router.post("/remember-me/load", isUnauthenticated, async (req, res) => {
 		});
 		return;
 	}
-	res.status(400).end();
+	res.clearCookie("rem-me").status(400).end();
 });
 
 router.delete("/logout", isAuthenticated, async (req, res, next) =>

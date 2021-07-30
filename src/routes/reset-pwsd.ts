@@ -8,7 +8,8 @@ import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
 import { client } from "../config/cache";
-import ms from "ms";
+import { pwsdResetSchema } from "../validation";
+import { s } from "../utils";
 
 const { env: ENV } = process;
 
@@ -23,32 +24,30 @@ router.use(express.json());
 
 router
 	.route("/reset-password")
-	.get(isUnauthenticated, (req, res) => res.render("reset-password"))
+	.get(isUnauthenticated, (_, res) => res.render("reset-password"))
 	.post(
 		isUnauthenticated,
 		rateLimit({
 			store: new RedisStore({
 				client: client,
-				expiry: ms("1m") / 1e3,
+				expiry: s("1m"),
 			}),
 			headers: false,
 			max: 2,
 			handler: (_, res) => {
 				res.status(429).json({
-					message: "You only can resend again after 1 minute.",
+					message: "Too many requests, please try again later.",
 				});
 			},
 		}),
 		async (req, res) => {
 			const { email } = req.body;
-			const user = await User.findOne({ visibleEmail: email });
+			const user = await User.findByEmail(email);
 
 			if (user) {
 				const token = PasswordReset.plaintextToken();
 
-				await PasswordReset.deleteMany({
-					userId: user._id,
-				});
+				await PasswordReset.deleteMany({ userId: user._id });
 
 				const reset = new PasswordReset({
 					userId: user._id,
@@ -58,12 +57,12 @@ router
 					),
 				});
 
-				reset.save();
-
-				await sendMail({
-					to: email,
-					subject: "Reset your password",
-					html: `
+				await Promise.all([
+					reset.save(),
+					sendMail({
+						to: email,
+						subject: "Reset your password",
+						html: `
                 <h4>Hello ${user.username},</h4>
                 <p>
                     A request has been received to change the password for your account.
@@ -76,7 +75,8 @@ router
                 <br/>
                 <br/>
                 <small>Thank you.</small>`,
-				});
+					}),
+				]);
 				res.status(200).json({
 					message: `Email has sent to ${user.username}.`,
 				});
@@ -90,42 +90,53 @@ router
 
 router
 	.route("/password/reset")
-	.get(isUnauthenticated, async (req, res) => {
-		const { id, token } = req.query;
-		let reset;
+	.get(
+		isUnauthenticated,
+		(req, res, next) => {
+			const { error } = pwsdResetSchema.validate(req.query);
+			if (error) {
+				res.status(404).render("404");
+				return;
+			}
+			next();
+		},
+		async (req, res) => {
+			const { id, token } = req.query;
+			let reset;
 
-		try {
-			reset = await PasswordReset.findById(id);
-		} catch (err) {
-			res.status(404).render("404");
-			return;
+			try {
+				reset = await PasswordReset.findById(id);
+			} catch (err) {
+				res.status(404).render("404");
+				return;
+			}
+			let user;
+
+			if (
+				!reset ||
+				!reset.isValidUrl(token as string) ||
+				!(user = await User.findById(reset.userId).select(
+					"username visibleEmail"
+				))
+			) {
+				res.status(400).json({
+					message: "Page not found",
+					status: "404",
+				});
+				return;
+			}
+
+			res.render("password-reset", { user: user });
 		}
-		let user;
-
-		if (
-			!reset ||
-			!reset.isValidUrl(token as string) ||
-			!(user = await User.findById(reset.userId).select(
-				"username visibleEmail"
-			))
-		) {
-			res.status(400).json({
-				message: "Page not found",
-				status: "404",
-			});
-			return;
-		}
-
-		res.render("password-reset", { user: user });
-	})
+	)
 	.post(isUnauthenticated, async (req, res) => {
 		const { id, token } = req.query;
 		const { password, passwordConfirm } = req.body;
 
 		if (
-			password.length < 8 ||
-			passwordConfirm.length < 8 ||
-			passwordConfirm !== password
+			!User.validPassword(password) ||
+			!User.validPassword(passwordConfirm) ||
+			password !== passwordConfirm
 		) {
 			res.status(400).json({
 				message: "Password does not match.",

@@ -6,10 +6,9 @@ import { isUnauthenticated } from "../middleware/auth";
 import * as dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import assert from "assert";
-import ms from "ms";
 import RedisStore from "rate-limit-redis";
 import { client } from "../config/cache";
-import { message } from "../utils/email-message";
+import { message, s } from "../utils";
 
 const { env: ENV } = process;
 
@@ -27,7 +26,7 @@ router
 		rateLimit({
 			store: new RedisStore({
 				client: client,
-				expiry: ms("1d") / 1e3,
+				expiry: s("1d"),
 			}),
 			headers: false,
 			max: 3,
@@ -40,13 +39,12 @@ router
 		async (req, res) => {
 			const { username, email, password } = req.body;
 			if (
-				!User.matchesUsername(username) ||
-				!User.matchesEmail(email) ||
-				!password ||
-				password.length < 8
+				!User.validUsername(username) ||
+				!User.validEmail(email) ||
+				!User.validPassword(password)
 			) {
 				res.status(400).json({
-					message: "Failed to register.",
+					message: "Validation does not match.",
 				});
 				return;
 			}
@@ -66,8 +64,10 @@ router
 				});
 				return;
 			}
-			const usernameExists = await User.exists({ username: username });
-			const emailExists = await User.exists({ email: email });
+			const [usernameExists, emailExists] = await Promise.all([
+				User.exists({ username: username }),
+				User.exists({ email: email }),
+			]);
 			if (usernameExists || emailExists) {
 				res.status(409).json({
 					message: "Username or email was taken.",
@@ -118,7 +118,7 @@ router.post("/available", isUnauthenticated, async (req, res) => {
 	const field = req.query.field || "username";
 	const value = (req.query.value as string) || "";
 	res.status(200).json({
-		wasTaken: await User.exists(
+		isAvailable: await User.exists(
 			field === "username"
 				? {
 						username: value,
