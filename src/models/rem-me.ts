@@ -9,28 +9,22 @@ if (ENV.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
-const RememberMeSchema = new mongoose.Schema<RememberMeDocument>(
-	{
-		token: String,
-		credentials: {
-			type: Object,
-			required: true,
-			index: {
-				unique: true,
-				expires: "1m",
-			},
-		},
-		expiresAt: Date || Number,
+const RememberMeSchema = new mongoose.Schema<RememberMeDocument>({
+	token: String,
+	credentials: {
+		type: Object,
+		required: true,
 	},
-	{
-		timestamps: {
-			createdAt: true,
-			updatedAt: false,
+	expiresAt: Date || Number,
+	createdAt: {
+		type: Date,
+		required: true,
+		default: Date.now(),
+		index: {
+			expires: "7d",
 		},
-	}
-);
-
-RememberMeSchema.index({ token: 1 }, { expireAfterSeconds: 60 });
+	},
+});
 
 RememberMeSchema.statics.plaintextToken = function () {
 	return crypto
