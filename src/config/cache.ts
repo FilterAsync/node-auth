@@ -27,4 +27,4 @@ const RedisStore = connectRedis(session);
 
 export const client = new Redis(RedisHost, RedisOptions);
 
-export const SessionStore = new RedisStore({ client: client });
+export const Store = new RedisStore({ client: client });
