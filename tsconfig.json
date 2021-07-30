@@ -18,5 +18,6 @@
 		"pretty": true
 	},
 	"include": ["src/**/*.ts", "*.ts"],
-	"exclude": ["node_modules/**", "views/**", "tests/**"]
+	"exclude": ["node_modules/**", "views/**", "tests/**"],
+	"compileOnSave": true
 }
