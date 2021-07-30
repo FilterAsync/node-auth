@@ -19,7 +19,7 @@ export const localStrategy = new LocalStrategy(
 		usernameField: "eou",
 	},
 	(eou, password, done) => {
-		const EoU = User.matchesEmail(eou) ? "email" : "username";
+		const EoU = User.validEmail(eou) ? "email" : "username";
 
 		eou = EoU === "email" ? crypto.createHmac("sha1", eou).digest("hex") : eou;
 		User.findOne(
@@ -34,7 +34,11 @@ export const localStrategy = new LocalStrategy(
 				if (err) {
 					return done(err);
 				}
-				if (!user || !user.matchesPassword(password) || !user.verifiedAt) {
+				if (
+					!user ||
+					!(await user.matchesPassword(password)) ||
+					!user.verifiedAt
+				) {
 					return done(null, false);
 				}
 				return done(null, user);
