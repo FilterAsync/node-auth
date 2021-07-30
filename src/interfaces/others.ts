@@ -1,4 +1,4 @@
 export interface verificationQuery {
-	expires: string;
-	signature: string;
+	readonly expires: string;
+	readonly signature: string;
 }

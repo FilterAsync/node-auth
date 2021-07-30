@@ -9,21 +9,21 @@ export interface UserDocument extends Document {
 	verifiedAt?: number | Date | null;
 	avatarUrl: string;
 	createVerificationUrl: () => string;
-	gravatar: (size: number) => Promise<any>;
+	gravatar: (size: number) => Promise<string>;
 	matchesPassword: (password: string) => Promise<boolean>;
 }
 
 export interface RememberMeDocument extends Document {
-	credentials: {
-		username: string;
-		password: string;
+	readonly credentials: {
+		readonly username: string;
+		readonly password: string;
 	};
 	token: string;
 	expiresAt: Date;
 }
 
 export interface PasswordResetDocument extends Document {
-	userId: Types.ObjectId;
+	readonly userId: Types.ObjectId;
 	token: string;
 	expiresAt: Date;
 	isValidUrl: (ptt: string) => boolean;
@@ -31,10 +31,13 @@ export interface PasswordResetDocument extends Document {
 }
 
 export interface UserModel extends Model<UserDocument> {
-	matchesEmail: (email: string) => string;
-	matchesUsername: (username: string) => boolean;
+	validEmail: (email: string) => boolean;
+	validUsername: (username: string) => boolean;
 	signVerificationUrl: (url: string) => string;
 	hasValidVerificationUrl: (url: string, query: verificationQuery) => string;
+	validPassword: (password: string) => boolean;
+	findByName: (username: string) => Promise<UserDocument> | null;
+	findByEmail: (email: string) => Promise<UserDocument> | null;
 }
 
 export interface RememberMeModel extends Model<RememberMeDocument> {
