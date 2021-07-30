@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../styles/normalize.css" type="text/css" />
-    <link rel="stylesheet" href="../styles/style.css" type="text/css" />
     <%- include ("./includes/resources.ejs") %>
+    <script type="text/javascript" src="../js/shared/show-password.js" defer="defer"></script>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
@@ -70,15 +69,21 @@
                             Username/Email address cannot be empty.
                         </div>
                     </div>
-                    <div class="form-floating mb-4">
-                        <input type="password" autocomplete="current-password" id="password" name="password" title="Password" aria-label="Password" class="form-control" minlength="8" placeholder="Password" required="required" aria-required="true" <%= isExceeded %> >
+                    <div class="form-floating mb-2">
+                        <input type="password" autocomplete="current-password" id="password" name="password"
+                        title="Password" aria-label="Password" class="form-control" minlength="10"
+                        pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$"
+                        placeholder="Password" required="required" aria-required="true" <%= isExceeded %> >
                         <label for="password">
                             Password
                         </label>
                         <div class="invalid-feedback">
-                            Password must be at least 8 characters.
+                            Password must contain at least ten characters long, one special character, one digit, one capitalize, and one lowercase character.
                         </div>
                     </div>
+                    <button id="show-password-btn" type="button" class="btn btn-link m-0 p-0 d-inline mb-4">
+                        Reveal Password
+                    </button>
                     <div class="form-check mb-4">
                         <input type="checkbox" name="rem-me" id="rem-me" class="form-check-input" <%= isExceeded %> >
                         <label for="rem-me" class="form-check-label">

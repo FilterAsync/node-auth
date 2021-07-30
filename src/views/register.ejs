@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../styles/normalize.css" type="text/css" />
-    <link rel="stylesheet" href="../styles/style.css" type="text/css" />
     <%- include ("./includes/resources.ejs") %>
+    <script type="text/javascript" src="../js/shared/show-password.js" defer="defer"></script>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
@@ -71,21 +70,26 @@
                             Email does not match, please follow this pattern: <em>name@example.domain</em>
                         </div>
                     </div>
-                    <div class="form-floating mb-4">
-                        <input id="password" name="password" autocomplete="current-password" type="password" placeholder="Password" class="form-control" minlength="8" required="required" aria-required="true"
+                    <div class="form-floating mb-2">
+                        <input id="password" name="password" autocomplete="current-password" type="password" placeholder="Password" class="form-control" 
+                        minlength="10" required="required" aria-required="true" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$"
                         aria-describedby="password-hint" aria-errormessage="password-invalid-feedback" <%= TooManyRequests %> >
                         <label for="password">
                             Password
                         </label>
                         <small id="password-hint" class="text-muted">
-                            Password must be at least 8 characters.
+                            Password must contain at least ten characters long, one special character, one digit, one capitalize, and one lowercase character.
                         </small>
                         <div id="password-invalid-feedback" class="invalid-feedback" aria-hidden="true">
-                            Password must be at least 8 characters.
+                            Password must contain at least ten characters long, one special character, one digit, one capitalize, and one lowercase character.
                         </div>
                     </div>
+                    <button id="show-password-btn" type="button" class="btn btn-link m-0 p-0 d-inline mb-4">
+                        Reveal Password
+                    </button>
                     <div class="form-floating mb-4">
-                        <input id="confirm-password" name="confirm-password" autocomplete="current-password" type="password" placeholder="Confirm Password" class="form-control" minlength="8" required="required" aria-required="true"
+                        <input id="confirm-password" name="confirm-password" autocomplete="current-password" type="password"
+                        placeholder="Confirm Password" class="form-control" minlength="10" required="required" aria-required="true"
                         aria-errormessage="confirm-password-invalid-feedback" <%= TooManyRequests %> >
                         <label for="confirm-password">
                             Confirm Password
@@ -108,7 +112,7 @@
                 <span class="mx-2" aria-hidden="true">
                     &bull;
                 </span>
-                <a href="/about" target="_self">
+                <a href="javascript:;" target="_self">
                     About
                 </a>
                 <div role="separator" class="mb-4" aria-hidden="true"></div>

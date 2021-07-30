@@ -1,36 +1,9 @@
+<link rel="stylesheet" href="../styles/normalize.css" type="text/css" />
+<link rel="stylesheet" href="../styles/style.css" type="text/css" />
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha384-Qg00WFl9r0Xr6rUqNLv1ffTSSKEFFCDCKVyHZ+sVt8KuvG99nWw5RNvbhuKgif9z" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<script type="text/javascript">
-(function() {
-    "use strict";
-    String.prototype.toCapitalize = function() {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-    }
-    document.getCookie = (cookieName) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${cookieName}=`);
-        if (parts.length === 2) {
-            return parts.pop().split(";").shift();
-        }
-        return parts[1];
-    }
-    $.fn.extend({
-        removeDisableAttr:function(){$(this).prop("disabled",false);},
-        addDisableAttr:function(){$(this).prop("disabled",true);},
-        bootstrapHide:function(){$(this).addClass("d-none");},
-        bootstrapShow:function(){$(this).removeClass("d-none");},
-        showInvalidValidate:function(){$(this).addClass("is-invalid");},
-        hideInvalidValidate:function(){$(this).removeClass("is-invalid");}
-    });
-    window.redirect=url=>location.href=!url.startsWith("/")?"/"+url:url;
-    navigator.cookieEnabled || (function() {
-        setTimeout(function() {
-            console.warn("Cookies are disabled.");
-            $("html").remove();
-        }, 10);
-    })();
-})();
-</script>
+<script type="text/javascript" src="../js/shared/utils.js"></script>
+<!-- <link rel="manifest" href="../manifest.json" /> -->
