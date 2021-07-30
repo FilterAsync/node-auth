@@ -97,10 +97,11 @@ app.use(
 
 		res.set({
 			/*
-			NOTE if you're about to add something that is stylesheet/font/frame/manifest/url loaded script
+			Note if you're about to add something that is stylesheet/font/frame/manifest/url loaded script
 			then you will need to enumerate it in the "Content-Security-Policy" property to stop logging CSP errors.
+
+			see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 		*/
-			// see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 			"Content-Security-Policy":
 				// allow content from the current origin
 				"default-src 'self';" +
