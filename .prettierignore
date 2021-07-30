@@ -1,2 +1,5 @@
 /public
+*.ejs
+*.html
+*.htm
 /node_modules

@@ -1,4 +1,9 @@
 {
-    "tabWidth": 2,
-    "singleQuote": false
+	"tabWidth": 2,
+	"singleQuote": false,
+	"arrowParens": "always",
+	"endOfLine": "auto",
+	"semi": true,
+	"parser": "typescript",
+	"embeddedLanguageFormatting": "auto"
 }
