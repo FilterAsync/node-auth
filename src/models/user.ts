@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
-import { hash, compare } from "bcrypt";
 import * as dotenv from "dotenv";
 import { UserDocument, UserModel } from "../interfaces";
 import { verificationQuery } from "../interfaces/others";
+import { pwsdHash, comparePwsd } from "../utils";
 
 const { env: ENV } = process;
 
@@ -48,27 +48,36 @@ const UserSchema = new mongoose.Schema<UserDocument>(
 	}
 );
 
-UserSchema.methods.gravatar = function (size = 96) {
+UserSchema.methods.gravatar = function (size: number = 96) {
 	const hash = crypto.createHash("md5").update(this.visibleEmail).digest("hex");
 
 	return `https://gravatar.com/avatar/${hash}?s=${size}&d=mp`;
 };
 
-UserSchema.statics.findByName = async function (username) {
+UserSchema.statics.findByName = async function (username: string) {
 	return await this.findOne({ username: username });
 };
 
-UserSchema.methods.matchesPassword = function (password) {
-	return compare(password, this.password);
+UserSchema.statics.findByEmail = async function (email: string) {
+	return await this.findOne({ visibleEmail: email });
 };
 
-UserSchema.statics.matchesUsername = (username) =>
+UserSchema.statics.validPassword = (password: string) =>
+	/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/.test(
+		password
+	);
+
+UserSchema.statics.validUsername = (username: string) =>
 	/^(?=^[^_]+_?[^_]+$)\w{3,20}$/.test(username);
 
-UserSchema.statics.matchesEmail = (email) =>
+UserSchema.statics.validEmail = (email: string) =>
 	/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$/.test(
 		email
 	);
+
+UserSchema.methods.matchesPassword = function (password: string) {
+	return User.validPassword(password) && comparePwsd(password, this.password);
+};
 
 UserSchema.methods.createVerificationUrl = function () {
 	const token = crypto.createHash("sha1").update(this.email).digest("hex");
@@ -80,7 +89,7 @@ UserSchema.methods.createVerificationUrl = function () {
 	return `${url}&signature=${signature}`;
 };
 
-UserSchema.statics.signVerificationUrl = (url) =>
+UserSchema.statics.signVerificationUrl = (url: string) =>
 	crypto
 		.createHmac("sha256", ENV.APP_SECRET as string)
 		.update(url)
@@ -108,8 +117,16 @@ UserSchema.statics.hasValidVerificationUrl = (
 
 UserSchema.pre("save", async function () {
 	if (this.isModified("password")) {
-		this.password = await hash(this.password, +(ENV.BCRYPT_SALT as string));
+		this.password = await pwsdHash(this.password);
 	}
+});
+
+UserSchema.post("save", function () {
+	console.log(
+		`Saving logger: "User '${
+			this.username
+		}' updated at ${new Date().toLocaleString()}."`
+	);
 });
 
 export const User = mongoose.model<UserDocument, UserModel>("User", UserSchema);
