@@ -1,7 +1,5 @@
-import { createApp } from "./app";
+import server from "./app";
 import mongoose from "mongoose";
-import errorHandler from "errorhandler";
-import { internalServerError } from "./middleware";
 import * as dotenv from "dotenv";
 
 const { env: ENV } = process;
@@ -25,7 +23,7 @@ const mongodbConnection = Prod
 		useCreateIndex: true,
 	});
 	console.log("MongoDB connection succeeded.");
-	const server = await createApp(Prod ? internalServerError : errorHandler());
+
 	server.listen(PORT, function () {
 		console.log(
 			"Server is running on PORT %d in %s mode.",
