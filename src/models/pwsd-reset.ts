@@ -18,7 +18,15 @@ const PasswordResetSchema = new mongoose.Schema<PasswordResetDocument>(
 			ref: "User",
 		},
 		token: String,
-		expiresAt: Date || Number,
+		expiresAt: Date,
+		createdAt: {
+			type: Date,
+			required: true,
+			default: Date.now(),
+			index: {
+				expires: "1h",
+			},
+		},
 	},
 	{
 		timestamps: {
@@ -28,11 +36,11 @@ const PasswordResetSchema = new mongoose.Schema<PasswordResetDocument>(
 	}
 );
 
-PasswordResetSchema.methods.createResetPasswordUrl = function (ptt) {
+PasswordResetSchema.methods.createResetPasswordUrl = function (ptt: string) {
 	return `${ENV.APP_ORIGIN}/password/reset?id=${this._id}&token=${ptt}`;
 };
 
-PasswordResetSchema.methods.isValidUrl = function (ptt) {
+PasswordResetSchema.methods.isValidUrl = function (ptt: string) {
 	const hash = PasswordReset.hashedToken(ptt);
 
 	const { expiresAt, token } = this;
@@ -50,7 +58,7 @@ PasswordResetSchema.statics.plaintextToken = function () {
 		.toString("hex");
 };
 
-PasswordResetSchema.statics.hashedToken = (ptt) =>
+PasswordResetSchema.statics.hashedToken = (ptt: string) =>
 	crypto
 		.createHmac("sha256", ENV.APP_SECRET as string)
 		.update(ptt)
