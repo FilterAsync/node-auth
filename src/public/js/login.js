@@ -1,14 +1,13 @@
-(async function($) {
+(async function ($) {
 	"use strict";
 	const email = $("#credential"),
-	password = $("#password"),
-	submitBtn = $("button[type='submit']"),
-	remMe = $("#rem-me");
+		password = $("#password"),
+		submitBtn = $("button[type='submit']"),
+		remMe = $("#rem-me");
 	const remMeData = document.getCookie("rem-me");
 
 	if (remMeData) {
-		const request = new Request(
-			"/remember-me/load?requestToken=" + remMeData, {
+		const request = new Request("/remember-me/load?requestToken=" + remMeData, {
 			method: "POST",
 			headers: new Headers({
 				"Content-Type": "application/json",
@@ -29,7 +28,7 @@
 		}
 	}
 	[email, password].forEach((field) => {
-		field.on("input", function() {
+		field.on("input", function () {
 			if (email.val() && password.val()) {
 				submitBtn.removeDisableAttr();
 				return;
@@ -39,17 +38,21 @@
 	});
 	const forms = document.querySelectorAll(".needs-validation");
 	Array.prototype.slice.call(forms).forEach((form) => {
-		form.addEventListener("submit", (event) => {
-			[email, password,].forEach((e) => e.prop("readonly", true));
-			submitBtn.addDisableAttr();
-			if (!form.checkValidity()) {
-				event.preventDefault();
-				event.stopPropagation();
-				[email, password, submitBtn,].forEach((e) =>
-					e.prop("readonly", false).prop("disabled", false)
-				);
-			}
-			form.classList.add("was-validated");
-		}, false);
+		form.addEventListener(
+			"submit",
+			(event) => {
+				[email, password].forEach((e) => e.prop("readonly", true));
+				submitBtn.addDisableAttr();
+				if (!form.checkValidity()) {
+					event.preventDefault();
+					event.stopPropagation();
+					[email, password, submitBtn].forEach((e) =>
+						e.prop("readonly", false).prop("disabled", false)
+					);
+				}
+				form.classList.add("was-validated");
+			},
+			false
+		);
 	});
 })(window.jQuery);

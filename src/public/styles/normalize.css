@@ -1,18 +1,18 @@
 @charset "UTF-8";
 
 body::-webkit-scrollbar {
-    width: 12px;
+  width: 12px;
 }
 
 body::-webkit-scrollbar-track {
-    background-color: rgb(33, 37, 41); 
+  background-color: rgb(33, 37, 41);
 }
 
 body::-webkit-scrollbar-thumb {
-    border-radius: 2px;
-    background-color: rgba(244, 245, 243, .9);
+  border-radius: 2px;
+  background-color: rgba(244, 245, 243, 0.9);
 }
 
 body::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(230, 230, 231, .9);
+  background-color: rgba(230, 230, 231, 0.9);
 }

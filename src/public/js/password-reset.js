@@ -1,15 +1,17 @@
-(function($) {
+(function ($) {
 	"use strict";
 	const newPassword = $("#new-password"),
-	newPasswordConfirm = $("#repeat-new-password"),
-	forms = document.querySelectorAll(".needs-validation"),
-	alert = $("#password-reset-alert"),
-	submitBtn = $("#submit-btn");
+		newPasswordConfirm = $("#repeat-new-password"),
+		forms = document.querySelectorAll(".needs-validation"),
+		alert = $("#password-reset-alert"),
+		submitBtn = $("#submit-btn");
 
-	[newPassword, newPasswordConfirm].forEach(field => {
-		field.on("input", function() {
-			if ($(this).val().length > 8 &&
-			(newPassword.val() === newPasswordConfirm.val())) {
+	[newPassword, newPasswordConfirm].forEach((field) => {
+		field.on("input", function () {
+			if (
+				$(this).val().length > 8 &&
+				newPassword.val() === newPasswordConfirm.val()
+			) {
 				submitBtn.removeDisableAttr();
 				return;
 			}
@@ -21,10 +23,12 @@
 			event.preventDefault();
 			event.stopPropagation();
 			form.classList.add("was-validated");
-			[newPassword,newPasswordConfirm,].forEach((e) => e.prop("readonly", true));
-			submitBtn.removeDisableAttr();
+			[newPassword, newPasswordConfirm].forEach((e) =>
+				e.prop("readonly", true)
+			);
+			submitBtn.addDisableAttr();
 			if (!form.checkValidity()) {
-				[newPassword, newPasswordConfirm, submitBtn,].forEach((e) =>
+				[newPassword, newPasswordConfirm, submitBtn].forEach((e) =>
 					e.prop("readonly", false).prop("disabled", false)
 				);
 				return;
@@ -47,12 +51,14 @@
 				body = void 0;
 			}
 
-			submitBtn.removeDisableAttr().text("Resend");
+			submitBtn.removeDisableAttr();
+			submitBtn.text("Resend");
 			const message = body && body.message;
 			if (!response.ok) {
-					[newPassword, newPasswordConfirm,].forEach((e) => e.prop("readonly", false));
-					alert.attr("class", "alert alert-danger")
-						.html(`
+				[newPassword, newPasswordConfirm].forEach((e) =>
+					e.prop("readonly", false)
+				);
+				alert.attr("class", "alert alert-danger").html(`
 							<strong class="semi-bold">
 								<span class="fas fa-exclamation-circle" aria-hidden="true"></span>
 								Error!
@@ -61,10 +67,9 @@
 								${message || "Failed to reset password."}
 							</p>
 					`);
-					throw new Error(message || "Failed to reset password.");
+				throw new Error(message || "Failed to reset password.");
 			}
-			alert.attr("class", "alert alert-success")
-				.html(`
+			alert.attr("class", "alert alert-success").html(`
 					<strong class="semi-bold">
 						<span class="fas fa-check-circle" aria-hidden="true"></span>
 						Success!
@@ -73,9 +78,9 @@
 						Successfully changed password. Please wait a few moment...
 					</p>
 			`);
-			setTimeout(function() {
+			setTimeout(function () {
 				redirect("/");
-			}, 500);
+			}, 250);
 		});
 	});
 })(window.jQuery);

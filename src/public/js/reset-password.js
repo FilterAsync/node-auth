@@ -1,10 +1,10 @@
-(function($) {
+(function ($) {
 	"use strict";
 	const submitBtn = $("#submit-btn"),
-	alert = $("#reset-password-alert"),
-	email = $("#email"),
-	feedback = $("#email-invalid-feedback");
-	email.on("input", function() {
+		alert = $("#reset-password-alert"),
+		email = $("#email"),
+		feedback = $("#email-invalid-feedback");
+	email.on("input", function () {
 		const regex = new RegExp($(this).attr("pattern"), "g");
 		if (!regex.test($(this).val())) {
 			feedback.text("Email does not match.");
@@ -25,7 +25,7 @@
 				method: "POST",
 				headers: new Headers({
 					"Content-Type": "application/json",
-					"Accept": "application/json",
+					Accept: "application/json",
 				}),
 				body: JSON.stringify({
 					email: email.val(),
@@ -36,22 +36,27 @@
 			submitBtn.removeDisableAttr();
 			const message = body.message && body.message;
 			if (!response.ok) {
-				alert.attr("class", "alert alert-danger")
-					.html(`
+				alert.attr("class", "alert alert-danger").html(`
 					<strong class="semi-bold">
 						<span class="fas fa-exclamation-circle" aria-hidden="true"></span>
 						Error!
 					</strong>
 					<p class="mb-0">
-						${message || `Sorry we cannot send an email to <strong class="semi-bold">
-							${email.val().length > 30 ? email.val().substring(0,30).concat("...") : email.val().concat(".")}
-						</strong>`}
+						${
+							message ||
+							`Sorry we cannot send an email to <strong class="semi-bold">
+							${
+								email.val().length > 30
+									? email.val().substring(0, 30).concat("...")
+									: email.val().concat(".")
+							}
+						</strong>`
+						}
 					</p>
 				`);
 				throw new Error(message || "Failed to reset password.");
 			}
-			alert.attr("class", "alert alert-success")
-				.html(`
+			alert.attr("class", "alert alert-success").html(`
 				<strong class="semi-bold">
 					<span class="fas fa-check-circle" aria-hidden="true"></span>
 					Success!
