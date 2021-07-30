@@ -14,16 +14,16 @@ export interface UserDocument extends Document {
 }
 
 export interface RememberMeDocument extends Document {
-	readonly credentials: {
-		readonly username: string;
-		readonly password: string;
+	credentials: {
+		username: string;
+		password: string;
 	};
 	token: string;
 	expiresAt: Date;
 }
 
 export interface PasswordResetDocument extends Document {
-	readonly userId: Types.ObjectId;
+	userId: Types.ObjectId;
 	token: string;
 	expiresAt: Date;
 	isValidUrl: (ptt: string) => boolean;
